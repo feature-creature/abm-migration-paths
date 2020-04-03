@@ -11,6 +11,11 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   this.normalizedBool = function(x){return p5i.random() <= x;} 
   this.exampleBoo = this.normalizedBool(0.5); 
 
+  this.intermediaries = [];
+  for(var i = 0; i < p5i.intermediaries.length; i++){
+    this.intermediaries.push(false);
+  }
+
   var parent = this;
   this.state = "potential";
   this.states= {
@@ -23,15 +28,15 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
       },
     "seeking":
       {
-        logic:function(){parent.isFindingIntermediary()},
+        logic:function(){parent.hasFoundIntermediary()},
         move:function(){parent.seekingWalk()},  
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(255),
       },
     "transit":
       {
-        logic:function(){},
-        move:function(){}, 
+        logic:function(){parent.findEmployer()},
+        move:function(){parent.transitWalk()}, 
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(200,255,255,255),
       },
@@ -48,7 +53,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   this.update = function(){
     this.states[this.state].logic();
     this.states[this.state].move();
-  }
+  };
 
 
   this.show = function(){
@@ -59,14 +64,15 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
     p5i.fill(this.states[this.state].color);
     p5i.ellipse(0,0,this.d,this.d);
     p5i.pop();
-  }
+  };
+
 
   this.potentialWalk = function(){
     this.randomWalk(
       -3, 3, 0.5, p5i.origin[0][0]+this.d, p5i.origin[1][0],
       -3, 3, 0.5, p5i.origin[0][1]+this.d, p5i.origin[1][1]-this.d
     );
-  } 
+  };
 
 
   this.isSeeking = function(){if(this.normalizedBool(0.00125))this.state = "seeking";} //0.000125
@@ -77,25 +83,35 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
       -1, 3, 0.5, p5i.origin[0][0]+this.d, p5i.origin[1][0],
       -3, 3, 0.5, p5i.origin[0][1]+this.d, p5i.origin[1][1]-this.d
     );
-  } 
+  };
 
 
-  this.isFindingIntermediary = function(){
+  this.hasFoundIntermediary = function(){
     for(var i = 0; i < p5i.intermediaries.length; i++){
       var intermediary = p5i.intermediaries[i];
       var d = p5.Vector.dist(this.pos,intermediary.pos);
       if(d < intermediary.dMin){
         this.state = "transit";
         this.network = intermediary.network;
-        //this.path = new Path(this.pos.x,this.pos.y,this.network);
+        this.path = new Path(p5i,this,this.pos,p5i.createVector(0,-1),this.network);
         break;
       }
     }
+  };
+
+
+  this.findEmployer = function(){this.path.grow();};
+  
+  this.transitWalk = function(){this.path.show();};
+
+
+  this.employedWalk = function(){
+ 
   }
 
 
   this.randomWalk = function(xStepMin,xStepMax,xSpread,xMin,xMax,yStepMin,yStepMax,ySpread,yMin,yMax){
     nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);
     if((nextMove.x >= xMin && nextMove.x <= xMax) && (nextMove.y >= yMin && nextMove.y <= yMax))this.pos = nextMove;
-  }
+  };
 }

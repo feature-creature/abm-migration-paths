@@ -12,7 +12,8 @@ function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
   this.network = p5i.random() <= 0.5 ? "a" : "b";
   this.hiring = false;
   this.d = diameter;
-  this.dMin = 20;
+  this.dMax = 250;
+  this.dMin = 9;
 
   var parent = this;
   this.networks = {
