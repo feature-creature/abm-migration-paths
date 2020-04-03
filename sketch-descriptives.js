@@ -39,13 +39,16 @@ let migrationPathwaysDescriptives = p5i => {
     p5i.push();
       p5i.textAlign(p5i.LEFT);
       p5i.translate(5,0);
-      p5i.stroke(0);
       p5i.text("0",0,hEnv-7);
       p5i.text(abm.migrants.length,0,hEnv-140);
       p5i.textAlign(p5i.RIGHT);
       p5i.text(abm.logMigrantStates.length +" / "+abm.ticks,wEnv-12,hEnv-7);
     p5i.pop();
     
+    p5i.push();
+    p5i.fill(165);
+    p5i.rect(0,0,wEnv,35);
+    p5i.pop();
     p5i.push();
       p5i.textAlign(p5i.RIGHT);
       p5i.translate(0,25);
@@ -54,7 +57,7 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1][0] + " Potential Migrants", 0, 0);
         p5i.stroke(255);
         p5i.fill(255);
-        p5i.ellipse(17,-7,15,15);
+        p5i.ellipse(17,-8,15,15);
       p5i.pop();
       p5i.push();
         p5i.translate(wEnv * 0.4,0);
@@ -62,7 +65,7 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.strokeWeight(3);
         p5i.stroke(255);
         p5i.fill(255,174,66);
-        p5i.ellipse(17,-7,15,15);
+        p5i.ellipse(17,-8,15,15);
       p5i.pop();
       p5i.push();
         p5i.translate(wEnv * 0.7,0);
@@ -70,8 +73,8 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.strokeWeight(3);
         p5i.stroke(200,255,255);
         p5i.fill(255,174,66);
-        p5i.line(17, -7, 37, -7);
-        p5i.ellipse(17,-7,15,15);
+        p5i.line(17, -8, 37, -8);
+        p5i.ellipse(17,-8,15,15);
       p5i.pop();
       p5i.push();
         p5i.translate(wEnv - 35,0);
@@ -79,7 +82,7 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.strokeWeight(3);
         p5i.stroke(0,0,255);
         p5i.fill(255,174,66);
-        p5i.ellipse(17,-7,15,15);
+        p5i.ellipse(17,-8,15,15);
       p5i.pop();
     p5i.pop();
   }
@@ -88,6 +91,8 @@ let migrationPathwaysDescriptives = p5i => {
   p5i.drawTrendlines = function(){
     p5i.push();
       p5i.translate(10,hEnv-35);
+      p5i.line(-2,0,-2,-95);
+      p5i.line(-2,2,wEnv-20,2);
       //---
       p5i.push();
         p5i.fill(abm.migrants[0].states.employed.stroke);
@@ -142,6 +147,7 @@ let migrationPathwaysDescriptives = p5i => {
       p5i.pop();
     p5i.pop();
   }
+
 
   p5i.pauseSketch = function(){
     pause = pause ? false : true;

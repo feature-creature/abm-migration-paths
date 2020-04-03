@@ -13,7 +13,7 @@ let migrationPathwaysABM = p5i => {
   p5i.ticks = 1000;
   
 
-  var numOfMigrants = 150;
+  var numOfMigrants = 90;
   p5i.migrants = [];
 
   p5i.logMigrantStates = [];
@@ -42,8 +42,8 @@ let migrationPathwaysABM = p5i => {
     p5i.drawEnvironment();
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].update();}
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].show();}
-    p5i.logStates();
     p5i.drawLabels();
+    p5i.logStates();
     p5i.isCompleted();
   }
 
@@ -59,7 +59,9 @@ let migrationPathwaysABM = p5i => {
   p5i.drawLabels = function(){
     p5i.push();
     p5i.stroke(0);
-    p5i.text("Migrant Pathways",15,35);
+    p5i.textAlign(p5i.CENTER);
+    p5i.text("ORIGIN",wEnv*0.25,50);
+    p5i.text("DESTINATION",wEnv*0.75,50);
     //p5i.text(p5i.frameRate(),15,77);
     p5i.pop();
   }
@@ -72,9 +74,6 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.isCompleted = function(){if(p5i.frameCount>=p5i.ticks)p5i.noLoop();}
-
-
-  //--------------------------------
 
 
   p5i.logStates = function(){
