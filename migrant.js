@@ -8,13 +8,11 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   this.pos = p5i.createVector(xPos,yPos);
   this.dir = p5i.createVector(xDir,yDir);
   this.d = diameter;
-  this.colorStroke = p5i.color(0,0,0,255);
-  this.colorFill = p5i.color(255,255,255,255);
   this.normalizedBool = function(x){return p5i.random() <= x;} 
   this.exampleBoo = this.normalizedBool(0.5); 
-  this.state = "potential";
 
   var parent = this;
+  this.state = "potential";
   this.states= {
     "potential":
       {
@@ -25,7 +23,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
       },
     "seeking":
       {
-        logic:function(){},
+        logic:function(){parent.isFindingIntermediary()},
         move:function(){parent.seekingWalk()},  
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(255),
@@ -71,7 +69,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   } 
 
 
-  this.isSeeking = function(){if(this.normalizedBool(0.000125))this.state = "seeking";}
+  this.isSeeking = function(){if(this.normalizedBool(0.00125))this.state = "seeking";} //0.000125
 
 
   this.seekingWalk = function(){
@@ -80,6 +78,20 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
       -3, 3, 0.5, p5i.origin[0][1]+this.d, p5i.origin[1][1]-this.d
     );
   } 
+
+
+  this.isFindingIntermediary = function(){
+    for(var i = 0; i < p5i.intermediaries.length; i++){
+      var intermediary = p5i.intermediaries[i];
+      var d = p5.Vector.dist(this.pos,intermediary.pos);
+      if(d < intermediary.dMin){
+        this.state = "transit";
+        this.network = intermediary.network;
+        //this.path = new Path(this.pos.x,this.pos.y,this.network);
+        break;
+      }
+    }
+  }
 
 
   this.randomWalk = function(xStepMin,xStepMax,xSpread,xMin,xMax,yStepMin,yStepMax,ySpread,yMin,yMax){

@@ -8,13 +8,18 @@ let migrationPathwaysABM = p5i => {
 
   var pause = true;
   var fr = 60;
-  var wEnv = 1920; //1920
-  var hEnv = 1080; //1080
+  var wEnv = 1920;
+  var hEnv = 1080;
   p5i.ticks = 1000;
   
 
-  var numOfMigrants = 90;
   p5i.migrants = [];
+  var numOfMigrants = 90;
+  var migrantDiameter = 15;
+
+  p5i.intermediaries = [];
+  var numOfIntermediaries = 70;
+  var intermediaryDiameter = 15;
 
   p5i.logMigrantStates = [];
 
@@ -31,7 +36,18 @@ let migrationPathwaysABM = p5i => {
     p5i.drawEnvironment();
     for(var i = 0; i < numOfMigrants; i++){
       p5i.migrants.push(
-        new Migrant(p5i, p5i.random(p5i.origin[0][0]+15, p5i.origin[1][0]), p5i.random(p5i.origin[0][1]+15, p5i.origin[1][1]-15), 0, 0, 15)
+        new Migrant(p5i, 
+          p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 
+          p5i.random(p5i.origin[0][1]+migrantDiameter, p5i.origin[1][1]-migrantDiameter), 
+          0, 0, migrantDiameter)
+      );
+    };
+    for(var i = 0; i < numOfIntermediaries; i++){
+      p5i.intermediaries.push(
+        new Intermediary(p5i, 
+          p5i.random(p5i.destination[0][0]-300 - intermediaryDiameter, p5i.destination[1][0]), 
+          p5i.random(p5i.destination[0][1]+intermediaryDiameter, p5i.destination[1][1]-intermediaryDiameter),
+          0, 0, intermediaryDiameter)
       );
     };
     p5i.noLoop();
@@ -40,7 +56,9 @@ let migrationPathwaysABM = p5i => {
 
   p5i.draw = function() {
     p5i.drawEnvironment();
+    for(var i = 0; i < p5i.intermediaries.length; i++){p5i.intermediaries[i].update();}
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].update();}
+    for(var i = 0; i < p5i.intermediaries.length; i++){p5i.intermediaries[i].show();}
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].show();}
     p5i.drawLabels();
     p5i.logStates();
@@ -77,17 +95,9 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.logStates = function(){
-    var numOfPotential = 0;
-    var numOfSeeking = 0;
-    var numOfTransit = 0;
-    var numOfEmployed = 0;
-    for(var i = 0; i < p5i.migrants.length; i++){
-      if(p5i.migrants[i].state == "potential")numOfPotential++;
-      if(p5i.migrants[i].state == "seeking")numOfSeeking++;
-      if(p5i.migrants[i].state == "transit")numOfTransit++;
-      if(p5i.migrants[i].state == "employed")numOfEmployed++;
-    }
-    p5i.logMigrantStates.push([numOfPotential,numOfSeeking,numOfTransit,numOfEmployed]);
+    var totals = {"potential":0,"seeking":0,"transit":0,"employed":0,};
+    for(var i = 0; i < p5i.migrants.length; i++){totals[p5i.migrants[i].state]++;}
+    p5i.logMigrantStates.push([totals.potential,totals.seeking,totals.transit,totals.employed]);
   }
 
 }
