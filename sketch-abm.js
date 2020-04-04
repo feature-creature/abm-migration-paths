@@ -20,6 +20,9 @@ let migrationPathwaysABM = p5i => {
   p5i.intermediaries = [];
   var numOfIntermediaries = 70;
   var intermediaryDiameter = 15;
+  
+  var numOfEmployers = 4;
+  var employerDiameter = 15;
 
   p5i.logMigrantStates = [];
 
@@ -43,6 +46,16 @@ let migrationPathwaysABM = p5i => {
       );
     };
     
+    for(var i = 0; i < numOfEmployers; i++){
+      var tempNet = i/numOfEmployers < 0.5? "a" : "b";
+      p5i.intermediaries.push(
+        new Employer(p5i, 
+          p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]), 
+          p5i.random(p5i.destination[0][1]+employerDiameter, p5i.destination[1][1]-employerDiameter),
+          0, 0, intermediaryDiameter,tempNet)
+      );
+    };
+
     for(var i = 0; i < numOfMigrants; i++){
       p5i.migrants.push(
         new Migrant(p5i, 
