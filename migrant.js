@@ -43,9 +43,10 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
     "employed":
       {
         logic:function(){},
-        move:function(){},    
+        move:function(){parent.employedWalk()},    
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(0,0,255,255),
+        employedWalkCount:0
       }
   };
 
@@ -102,11 +103,16 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
 
   this.findEmployer = function(){this.path.grow();};
   
+  
   this.transitWalk = function(){this.path.show();};
 
 
   this.employedWalk = function(){
- 
+    this.path.show();
+    if(p5i.frameCount % 3 ==0){
+      this.pos = this.path.routes[this.path.routes.length - 1 - this.states[this.state].employedWalkCount].pos;
+      if(this.states[this.state].employedWalkCount != this.path.routes.length - 1)this.states[this.state].employedWalkCount++;
+    } 
   }
 
 

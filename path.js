@@ -41,9 +41,10 @@ function Path (p5i, migrant, pos, dir, network){
 
   this.show = function(){
     p5i.push();
+    p5i.noFill();
     p5i.strokeWeight(2);
     p5i.stroke(this.networks[this.network].color);
-    p5i.beginShape(p5i.POINTS);
+    migrant.state == "employed"? p5i.beginShape() : p5i.beginShape(p5i.POINTS);
     for(var i = 0; i < this.routes.length; i++){p5i.vertex(this.routes[i].pos.x,this.routes[i].pos.y);}
     p5i.endShape();
     p5i.pop();
@@ -71,13 +72,14 @@ function Path (p5i, migrant, pos, dir, network){
           if(intermediary.dMin > d){
             //stop adding routes to the migrant's path in the direction of this intermediary
             closestRoute = null;
+            // do not revisit the intermediary again
+            migrant.intermediaries[i]=true;
+            
             // if this intermediary is an employer, employ this migrant
-            if(intermediary.hiring == true){
+            if(intermediary.hiring){
               migrant.employer = intermediary; 
               migrant.state = "employed";
             }
-            // do not revisit the intermediary again
-            migrant.intermediaries[i]=true;
             break;
 
           // if this this route is within the intermediary's influence diameter
@@ -115,6 +117,28 @@ function Path (p5i, migrant, pos, dir, network){
       }
     }
 
+    if(migrant.state == "employed"){
+      var eRecord = 10000;
+      var employerRoute;
+      var shortestPath = [];
+      
+      // find route that terminates at employer
+      for(var i = this.routes.length -1; i > 0; i--){
+        var ed = p5.Vector.dist(migrant.employer.pos,this.routes[i].pos);
+        if(ed < eRecord){
+          eRecord = ed;
+          employerRoute = this.routes[i];
+        }
+      };
+
+      // prune all alternative paths that do not lead to employer
+      shortestPath.push(employerRoute);
+      while(shortestPath[shortestPath.length-1].parent != null){
+        shortestPath.push(shortestPath[shortestPath.length-1].parent);
+      }
+      this.routes = shortestPath;
+      
+    }
   };
 
 }
