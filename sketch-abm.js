@@ -10,15 +10,15 @@ let migrationPathwaysABM = p5i => {
   var fr = 60;
   var wEnv = 1920;
   var hEnv = 1080;
-  p5i.ticks = 1000;
+  p5i.ticks = 2000;
   
 
   p5i.migrants = [];
-  var numOfMigrants = 90;
+  var numOfMigrants = 200;
   var migrantDiameter = 15;
 
   p5i.intermediaries = [];
-  var numOfIntermediaries = 70;
+  var numOfIntermediaries = 90;
   var intermediaryDiameter = 15;
   
   var numOfEmployers = 4;
@@ -110,9 +110,9 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.logStates = function(){
-    var totals = {"potential":0,"seeking":0,"transit":0,"employed":0,};
+    var totals = {"potential":0,"seeking":0,"brokered":0,"transit":0,"employed":0,};
     for(var i = 0; i < p5i.migrants.length; i++){totals[p5i.migrants[i].state]++;}
-    p5i.logMigrantStates.push([totals.potential,totals.seeking,totals.transit,totals.employed]);
+    p5i.logMigrantStates.push(totals);
   }
 
 }

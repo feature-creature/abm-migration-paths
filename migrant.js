@@ -33,20 +33,27 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(255),
       },
-    "transit":
+    "brokered":
       {
         logic:function(){parent.findEmployer()},
+        move:function(){parent.brokeredWalk()}, 
+        color:p5i.color(0,174,66,255),
+        stroke:p5i.color(0,255,255,255),
+      },
+    "transit":
+      {
+        logic:function(){},
         move:function(){parent.transitWalk()}, 
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(200,255,255,255),
+        transitWalkCount:0
       },
     "employed":
       {
         logic:function(){},
-        move:function(){parent.employedWalk()},    
+        move:function(){},    
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(0,0,255,255),
-        employedWalkCount:0
       }
   };
 
@@ -92,7 +99,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
       var intermediary = p5i.intermediaries[i];
       var d = p5.Vector.dist(this.pos,intermediary.pos);
       if(d < intermediary.dMin){
-        this.state = "transit";
+        this.state = "brokered";
         this.network = intermediary.network;
         this.path = new Path(p5i,this,this.pos,p5i.createVector(0,-1),this.network);
         break;
@@ -104,15 +111,20 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   this.findEmployer = function(){this.path.grow();};
   
   
-  this.transitWalk = function(){this.path.show();};
+  this.brokeredWalk = function(){this.path.show();};
 
 
-  this.employedWalk = function(){
+  this.transitWalk = function(){
     this.path.show();
     if(p5i.frameCount % 3 ==0){
-      this.pos = this.path.routes[this.path.routes.length - 1 - this.states[this.state].employedWalkCount].pos;
-      if(this.states[this.state].employedWalkCount != this.path.routes.length - 1)this.states[this.state].employedWalkCount++;
+      this.pos = this.path.routes[this.path.routes.length - 1 - this.states[this.state].transitWalkCount].pos;
+      if(this.states[this.state].transitWalkCount != this.path.routes.length - 1)this.states[this.state].transitWalkCount++;
     } 
+    p5i.push();
+    p5i.stroke(this.states.transit.stroke);
+    p5i.line(this.pos.x,this.pos.y,this.employer.pos.x,this.employer.pos.y);
+    p5i.pop();
+    if(this.states[this.state].transitWalkCount == this.path.routes.length -1){this.state = "employed"}
   }
 
 

@@ -36,6 +36,7 @@ let migrationPathwaysDescriptives = p5i => {
 
 
   p5i.drawLabels = function(){
+
     p5i.push();
       p5i.textAlign(p5i.LEFT);
       p5i.translate(5,0);
@@ -46,44 +47,59 @@ let migrationPathwaysDescriptives = p5i => {
     p5i.pop();
     
     p5i.push();
-    p5i.fill(165);
-    p5i.rect(0,0,wEnv,35);
+      p5i.fill(165);
+      p5i.rect(0,0,wEnv,35);
     p5i.pop();
+
     p5i.push();
       p5i.textAlign(p5i.RIGHT);
       p5i.translate(0,25);
+    
       p5i.push();
         p5i.translate(253,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1][0] + " Potential Migrants", 0, 0);
-        p5i.stroke(255);
-        p5i.fill(255);
+        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].potential + " Potential Migrants", 0, 0);
+        p5i.stroke(abm.migrants[0].states.potential.stroke);
+        p5i.fill(abm.migrants[0].states.potential.color);
         p5i.ellipse(17,-8,15,15);
       p5i.pop();
+    
       p5i.push();
-        p5i.translate(wEnv * 0.4,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1][1] + " Seeking Migrants", 0, 0);
+        p5i.translate(wEnv * 0.35,0);
+        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].seeking + " Seeking Migrants", 0, 0);
         p5i.strokeWeight(3);
-        p5i.stroke(255);
-        p5i.fill(255,174,66);
+        p5i.stroke(abm.migrants[0].states.seeking.stroke);
+        p5i.fill(abm.migrants[0].states.seeking.color);
         p5i.ellipse(17,-8,15,15);
       p5i.pop();
+
       p5i.push();
-        p5i.translate(wEnv * 0.7,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1][2] + " Transit Migrants", 0, 0);
+        p5i.translate(wEnv * 0.55,0);
+        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].brokered + " Brokered Migrants", 0, 0);
         p5i.strokeWeight(3);
-        p5i.stroke(200,255,255);
-        p5i.fill(255,174,66);
+        p5i.stroke(abm.migrants[0].states.brokered.stroke);
+        p5i.fill(abm.migrants[0].states.brokered.color);
+        p5i.ellipse(17,-8,15,15);
+      p5i.pop();
+
+      p5i.push();
+        p5i.translate(wEnv * 0.75,0);
+        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].transit + " Transit Migrants", 0, 0);
+        p5i.strokeWeight(3);
+        p5i.stroke(abm.migrants[0].states.transit.stroke);
+        p5i.fill(abm.migrants[0].states.transit.color);
         p5i.line(17, -8, 37, -8);
         p5i.ellipse(17,-8,15,15);
       p5i.pop();
+
       p5i.push();
         p5i.translate(wEnv - 35,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1][3] + " Employed Migrants", 0, 0);
+        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].employed + " Employed Migrants", 0, 0);
         p5i.strokeWeight(3);
-        p5i.stroke(0,0,255);
-        p5i.fill(255,174,66);
+        p5i.stroke(abm.migrants[0].states.employed.stroke);
+        p5i.fill(abm.migrants[0].states.employed.color);
         p5i.ellipse(17,-8,15,15);
       p5i.pop();
+
     p5i.pop();
   }
 
@@ -100,12 +116,18 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.beginShape();
         p5i.vertex(0,-95);
         for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1), p5i.map(abm.logMigrantStates[i][0],0,abm.migrants.length,0,-95) + p5i.map(abm.logMigrantStates[i][1],0,abm.migrants.length,0,-95) + p5i.map(abm.logMigrantStates[i][2],0,abm.migrants.length,0,-95) + p5i.map(abm.logMigrantStates[i][3],0,abm.migrants.length,0,-95));
+          p5i.vertex((wEnv-20)/abm.ticks*(i+1), 
+            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].employed,0,abm.migrants.length,0,-95));
         }
         p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
         p5i.vertex(0,0);
         p5i.endShape(p5i.CLOSE);
       p5i.pop();
+
       //---
       p5i.push();
         p5i.fill(abm.migrants[0].states.transit.stroke);
@@ -113,25 +135,50 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.beginShape();
         p5i.vertex(0,-95);
         for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1), p5i.map(abm.logMigrantStates[i][0],0,abm.migrants.length,0,-95) + p5i.map(abm.logMigrantStates[i][1],0,abm.migrants.length,0,-95) + p5i.map(abm.logMigrantStates[i][2],0,abm.migrants.length,0,-95));
+          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95));
         }
         p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
         p5i.vertex(0,0);
         p5i.endShape(p5i.CLOSE);
       p5i.pop();
+
       //---
-        p5i.push();
+      p5i.push();
+        p5i.fill(abm.migrants[0].states.brokered.color);
+        p5i.noStroke();
+        p5i.beginShape();
+        p5i.vertex(0,-95);
+        for(var i = 0; i < abm.logMigrantStates.length;i++){
+          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95));
+        }
+        p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+        p5i.vertex(0,0);
+        p5i.endShape(p5i.CLOSE);
+      p5i.pop();
+
+      //---
+      p5i.push();
         p5i.fill(abm.migrants[0].states.seeking.color);
         p5i.noStroke();
         p5i.beginShape();
         p5i.vertex(0,-95);
         for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1), p5i.map(abm.logMigrantStates[i][1],0,abm.migrants.length,0,-95) + p5i.map(abm.logMigrantStates[i][0],0,abm.migrants.length,0,-95));
+          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95));
         }
         p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
         p5i.vertex(0,0);
         p5i.endShape(p5i.CLOSE);
       p5i.pop();
+
       //---
       p5i.push();
         p5i.fill(abm.migrants[0].states.potential.color);
@@ -139,12 +186,14 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.beginShape();
         p5i.vertex(0,-95);
         for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1), p5i.map(abm.logMigrantStates[i][0],0,abm.migrants.length,0,-95));
+          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95));
         }
         p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
         p5i.vertex(0,0);
         p5i.endShape(p5i.CLOSE);
       p5i.pop();
+
     p5i.pop();
   }
 

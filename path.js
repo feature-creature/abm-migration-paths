@@ -44,7 +44,7 @@ function Path (p5i, migrant, pos, dir, network){
     p5i.noFill();
     p5i.strokeWeight(2);
     p5i.stroke(this.networks[this.network].color);
-    migrant.state == "employed"? p5i.beginShape() : p5i.beginShape(p5i.POINTS);
+    migrant.state == "transit"? p5i.beginShape() : p5i.beginShape(p5i.POINTS);
     for(var i = 0; i < this.routes.length; i++){p5i.vertex(this.routes[i].pos.x,this.routes[i].pos.y);}
     p5i.endShape();
     p5i.pop();
@@ -78,7 +78,7 @@ function Path (p5i, migrant, pos, dir, network){
             // if this intermediary is an employer, employ this migrant
             if(intermediary.hiring){
               migrant.employer = intermediary; 
-              migrant.state = "employed";
+              migrant.state = "transit";
             }
             break;
 
@@ -117,7 +117,7 @@ function Path (p5i, migrant, pos, dir, network){
       }
     }
 
-    if(migrant.state == "employed"){
+    if(migrant.state == "transit"){
       var eRecord = 10000;
       var employerRoute;
       var shortestPath = [];
