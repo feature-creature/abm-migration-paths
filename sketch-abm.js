@@ -10,7 +10,7 @@ let migrationPathwaysABM = p5i => {
   var fr = 60;
   var wEnv = 1920;
   var hEnv = 1080;
-  p5i.ticks = 2000;
+  p5i.ticks = 3000;
   
 
   p5i.migrants = [];
@@ -50,7 +50,7 @@ let migrationPathwaysABM = p5i => {
       var tempNet = i/numOfEmployers < 0.5? "a" : "b";
       p5i.intermediaries.push(
         new Employer(p5i, 
-          p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]), 
+          p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]-75), 
           p5i.random(p5i.destination[0][1]+employerDiameter, p5i.destination[1][1]-employerDiameter),
           0, 0, intermediaryDiameter,tempNet)
       );

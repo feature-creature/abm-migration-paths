@@ -83,7 +83,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   };
 
 
-  this.isSeeking = function(){if(this.normalizedBool(0.00125))this.state = "seeking";} //0.000125
+  this.isSeeking = function(){if(this.normalizedBool(0.000125))this.state = "seeking";} //0.000125
 
 
   this.seekingWalk = function(){

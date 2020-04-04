@@ -56,7 +56,7 @@ let migrationPathwaysDescriptives = p5i => {
       p5i.translate(0,25);
     
       p5i.push();
-        p5i.translate(253,0);
+        p5i.translate(225,0);
         p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].potential + " Potential Migrants", 0, 0);
         p5i.stroke(abm.migrants[0].states.potential.stroke);
         p5i.fill(abm.migrants[0].states.potential.color);
