@@ -41,9 +41,11 @@ function Path (p5i, migrant, pos, dir, network){
 
   this.show = function(){
     p5i.push();
+    p5i.strokeWeight(2);
     p5i.stroke(this.networks[this.network].color);
-    p5i.fill(this.networks[this.network].color);
-    for(var i = 0; i < this.routes.length; i++)this.routes[i].show();
+    p5i.beginShape(p5i.POINTS);
+    for(var i = 0; i < this.routes.length; i++){p5i.vertex(this.routes[i].pos.x,this.routes[i].pos.y);}
+    p5i.endShape();
     p5i.pop();
   };
 

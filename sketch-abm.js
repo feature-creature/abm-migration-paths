@@ -34,14 +34,6 @@ let migrationPathwaysABM = p5i => {
     p5i.background(175);
 
     p5i.drawEnvironment();
-    for(var i = 0; i < numOfMigrants; i++){
-      p5i.migrants.push(
-        new Migrant(p5i, 
-          p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 
-          p5i.random(p5i.origin[0][1]+migrantDiameter, p5i.origin[1][1]-migrantDiameter), 
-          0, 0, migrantDiameter)
-      );
-    };
     for(var i = 0; i < numOfIntermediaries; i++){
       p5i.intermediaries.push(
         new Intermediary(p5i, 
@@ -50,6 +42,16 @@ let migrationPathwaysABM = p5i => {
           0, 0, intermediaryDiameter)
       );
     };
+    
+    for(var i = 0; i < numOfMigrants; i++){
+      p5i.migrants.push(
+        new Migrant(p5i, 
+          p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 
+          p5i.random(p5i.origin[0][1]+migrantDiameter, p5i.origin[1][1]-migrantDiameter), 
+          0, 0, migrantDiameter)
+      );
+    };
+    
     p5i.noLoop();
   }
 
