@@ -44,7 +44,8 @@ function Path (p5i, migrant, pos, dir, network){
     p5i.noFill();
     p5i.strokeWeight(2);
     p5i.stroke(this.networks[this.network].color);
-    migrant.state == "transit"? p5i.beginShape() : p5i.beginShape(p5i.POINTS);
+    migrant.state == "brokered"? p5i.beginShape(p5i.POINTS) : p5i.beginShape();
+    //2
     for(var i = 0; i < this.routes.length; i++){p5i.vertex(this.routes[i].pos.x,this.routes[i].pos.y);}
     p5i.endShape();
     p5i.pop();
@@ -137,7 +138,6 @@ function Path (p5i, migrant, pos, dir, network){
         shortestPath.push(shortestPath[shortestPath.length-1].parent);
       }
       this.routes = shortestPath;
-      
     }
   };
 

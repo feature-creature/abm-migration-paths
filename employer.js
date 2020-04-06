@@ -1,5 +1,5 @@
 /*
- * Employer :wInstance
+ * Employer Instance
  *
  */
 
@@ -14,10 +14,11 @@ function Employer (p5i,xPos,yPos,xDir,yDir,diameter,network){
   this.hiring = true;
   this.harm = p5i.random();
   this.d = diameter;
+  this.dWorkPlace = this.d*10;
   this.dMax = 350;
   this.dMin = 20;
 
-  this.state = p5i.random() <= 0.5 ? "a" : "b";
+  this.state = network;
   var parent = this;
   this.states = {
     "a" : {
@@ -43,7 +44,7 @@ function Employer (p5i,xPos,yPos,xDir,yDir,diameter,network){
     p5i.stroke(0);
     p5i.fill(255,0,0,100);
     //p5i.fill(255,0,0,p5i.map(this.state,0,numOfEmployers+1,0,205));
-    p5i.ellipse(0,0,this.d*10,this.d*10);
+    p5i.ellipse(0,0,this.dWorkPlace,this.dWorkPlace);
 
     p5i.noFill();
     p5i.strokeWeight(3);
@@ -52,7 +53,7 @@ function Employer (p5i,xPos,yPos,xDir,yDir,diameter,network){
     
     p5i.fill(this.states[this.state].color);
     p5i.stroke(0);
-    p5i.ellipse(0,0, this.diameter, this.diameter);
+    p5i.ellipse(0,0, this.d, this.d);
     p5i.pop();
  }
 

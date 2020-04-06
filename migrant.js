@@ -50,8 +50,8 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
       },
     "employed":
       {
-        logic:function(){},
-        move:function(){},    
+        logic:function(){parent.work()},
+        move:function(){parent.employedWalk()},    
         color:p5i.color(255,174,66,255),
         stroke:p5i.color(0,0,255,255),
       }
@@ -116,17 +116,34 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
 
   this.transitWalk = function(){
     this.path.show();
-    if(p5i.frameCount % 3 ==0){
+    if(p5i.frameCount % 3 == 0){
       this.pos = this.path.routes[this.path.routes.length - 1 - this.states[this.state].transitWalkCount].pos;
       if(this.states[this.state].transitWalkCount != this.path.routes.length - 1)this.states[this.state].transitWalkCount++;
     } 
+
     p5i.push();
     p5i.stroke(this.states.transit.stroke);
     p5i.line(this.pos.x,this.pos.y,this.employer.pos.x,this.employer.pos.y);
     p5i.pop();
+
     if(this.states[this.state].transitWalkCount == this.path.routes.length -1){this.state = "employed"}
   }
 
+  this.work = function(){
+    testX = p5i.random() >= 0.5 ? 3 :-3;
+    testX += this.pos.x;
+    testY = p5i.random() >= 0.5 ? 3 : -3;
+    testY += this.pos.y;
+    var test = p5i.createVector(testX,testY);
+    var d = p5.Vector.dist(test,this.employer.pos);
+    if(d < this.employer.dWorkPlace/2)this.pos.x = test.x;
+    if(d < this.employer.dWorkPlace/2)this.pos.y = test.y;
+  }
+
+  this.employedWalk = function(){
+    this.path.show();
+    this.show();
+  };
 
   this.randomWalk = function(xStepMin,xStepMax,xSpread,xMin,xMax,yStepMin,yStepMax,ySpread,yMin,yMax){
     nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);

@@ -47,7 +47,7 @@ let migrationPathwaysABM = p5i => {
     };
     
     for(var i = 0; i < numOfEmployers; i++){
-      var tempNet = i/numOfEmployers < 0.5? "a" : "b";
+      var tempNet = (i+1)/numOfEmployers <= 0.5? "a" : "b";
       p5i.intermediaries.push(
         new Employer(p5i, 
           p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]-75), 
