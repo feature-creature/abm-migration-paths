@@ -117,8 +117,8 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   this.transitWalk = function(){
     this.path.show();
     if(p5i.frameCount % 3 == 0){
-      this.pos = this.path.routes[this.path.routes.length - 1 - this.states[this.state].transitWalkCount].pos;
-      if(this.states[this.state].transitWalkCount != this.path.routes.length - 1)this.states[this.state].transitWalkCount++;
+      this.pos = this.path.steps[this.path.steps.length - 1 - this.states[this.state].transitWalkCount].pos;
+      if(this.states[this.state].transitWalkCount != this.path.steps.length - 1)this.states[this.state].transitWalkCount++;
     } 
 
     p5i.push();
@@ -126,7 +126,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
     p5i.line(this.pos.x,this.pos.y,this.employer.pos.x,this.employer.pos.y);
     p5i.pop();
 
-    if(this.states[this.state].transitWalkCount == this.path.routes.length -1){this.state = "employed"}
+    if(this.states[this.state].transitWalkCount == this.path.steps.length -1){this.state = "employed"}
   }
 
   this.work = function(){

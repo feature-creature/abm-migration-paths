@@ -40,7 +40,7 @@ let migrationPathwaysABM = p5i => {
     for(var i = 0; i < numOfIntermediaries; i++){
       p5i.intermediaries.push(
         new Intermediary(p5i, 
-          p5i.random(p5i.destination[0][0]-300 - intermediaryDiameter, p5i.destination[1][0]), 
+          p5i.random(p5i.destination[0][0]-300 - intermediaryDiameter, p5i.destination[1][0]-100), 
           p5i.random(p5i.destination[0][1]+intermediaryDiameter, p5i.destination[1][1]-intermediaryDiameter),
           0, 0, intermediaryDiameter)
       );

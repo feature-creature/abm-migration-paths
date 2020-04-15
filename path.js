@@ -9,11 +9,11 @@ function Path (p5i, migrant, pos, dir, network){
   this.dir = dir;
   this.network = network
 
-  var initial = new Route(p5i,null,this.pos,this.dir,9); 
+  var initial = new Step(p5i,null,this.pos,this.dir,9); 
   var current = initial;
-  this.routes = [];
-  this.shortestRoute = [];
-  this.routes.push(current);
+  this.steps = [];
+  this.shortestStep = [];
+  this.steps.push(current);
   this.migrant = migrant;
 
 
@@ -46,7 +46,7 @@ function Path (p5i, migrant, pos, dir, network){
     p5i.stroke(this.networks[this.network].color);
     migrant.state == "brokered"? p5i.beginShape(p5i.POINTS) : p5i.beginShape();
     //2
-    for(var i = 0; i < this.routes.length; i++){p5i.vertex(this.routes[i].pos.x,this.routes[i].pos.y);}
+    for(var i = 2; i < this.steps.length; i++){p5i.vertex(this.steps[i].pos.x,this.steps[i].pos.y);}
     p5i.endShape();
     p5i.pop();
   };
@@ -57,22 +57,23 @@ function Path (p5i, migrant, pos, dir, network){
     for(var i = 0; i < p5i.intermediaries.length; i++){
       
       // if this intermediary is in the same network as this migrant
-      if(p5i.intermediaries[i].network == this.network && migrant.intermediaries[i] == false){
+      if(p5i.intermediaries[i].network == this.network
+        && migrant.intermediaries[i] == false){
 
         var intermediary = p5i.intermediaries[i];
         var record = intermediary.dMax; 
-        var closestRoute = null;
+        var closestStep = null;
         
-        // compare all the migrant's routes to this intermediary
-        for(var j = 0; j < this.routes.length;j++){
+        // compare all the migrant's steps to this intermediary
+        for(var j = 0; j < this.steps.length;j++){
 
-          var route = this.routes[j]
-          var d = p5.Vector.dist(intermediary.pos,route.pos);
+          var step = this.steps[j]
+          var d = p5.Vector.dist(intermediary.pos,step.pos);
 
-          // if this route is within the intermediary's death diameter
+          // if this step is within the intermediary's death diameter
           if(intermediary.dMin > d){
-            //stop adding routes to the migrant's path in the direction of this intermediary
-            closestRoute = null;
+            //stop adding steps to the migrant's path in the direction of this intermediary
+            closestStep = null;
             // do not revisit the intermediary again
             migrant.intermediaries[i]=true;
             
@@ -83,61 +84,60 @@ function Path (p5i, migrant, pos, dir, network){
             }
             break;
 
-          // if this this route is within the intermediary's influence diameter
-          // and is the closest route without entering the death diameter
+          // if this this step is within the intermediary's influence diameter
+          // and is the closest step without entering the death diameter
           }else if(d < record){
-            // identify this route the closest route to this intermediary
+            // identify this step the closest step to this intermediary
             record = d;
-            closestRoute = route;
+            closestStep = step;
           }
         }
 
-        // if a (closest) route is influenced by this intermediary
-        if(closestRoute != null){
-          // determine the next route's direction
-          var nextDir = p5.Vector.sub(intermediary.pos,closestRoute.pos);
+        // if a (closest) step is influenced by this intermediary
+        if(closestStep != null){
+          // determine the next step's direction
+          var nextDir = p5.Vector.sub(intermediary.pos,closestStep.pos);
           // normalize this new direction to length 1
           nextDir.normalize();
-          // add it to the closest route's direction
-          closestRoute.dir.add(nextDir);
-          // increase the closest route's count by 1
-          closestRoute.count++;
+          // add it to the closest step's direction
+          closestStep.dir.add(nextDir);
+          // increase the closest step's count by 1
+          closestStep.count++;
         }
-
       }
     }
 
     // for any influenced branch add a new branch with the averaged direction
     // if its influecing intermediaries
-    for(var i = this.routes.length - 1; i >= 0; i--){
-      var route = this.routes[i];
-      if(route.count > 0){
-        route.dir.div(route.count + 1);
-        this.routes.push(route.next());
-        route.reset();
+    for(var i = this.steps.length - 1; i >= 0; i--){
+      var step = this.steps[i];
+      if(step.count > 0){
+        step.dir.div(step.count + 1);
+        this.steps.push(step.next());
+        step.reset();
       }
     }
 
     if(migrant.state == "transit"){
       var eRecord = 10000;
-      var employerRoute;
+      var employerStep;
       var shortestPath = [];
       
-      // find route that terminates at employer
-      for(var i = this.routes.length -1; i > 0; i--){
-        var ed = p5.Vector.dist(migrant.employer.pos,this.routes[i].pos);
+      // find step that terminates at employer
+      for(var i = this.steps.length -1; i > 0; i--){
+        var ed = p5.Vector.dist(migrant.employer.pos,this.steps[i].pos);
         if(ed < eRecord){
           eRecord = ed;
-          employerRoute = this.routes[i];
+          employerStep = this.steps[i];
         }
       };
 
       // prune all alternative paths that do not lead to employer
-      shortestPath.push(employerRoute);
+      shortestPath.push(employerStep);
       while(shortestPath[shortestPath.length-1].parent != null){
         shortestPath.push(shortestPath[shortestPath.length-1].parent);
       }
-      this.routes = shortestPath;
+      this.steps = shortestPath;
     }
   };
 
