@@ -53,6 +53,55 @@ function Path (p5i, migrant, pos, dir, network){
 
 
   this.grow = function(network,employed){
+    // look at each employer 
+    for(var i = 0; i < p5i.employers.length; i++){
+      
+      // if this employer is in the same network as this migrant
+      if(p5i.employers[i].network == this.network && migrant.employers[i] == false){
+        var closestStep = null;
+        var employer = p5i.employers[i];
+        var record = employer.dMax; 
+        
+        // does the employer interact with any steps in the migrant's path
+        // if so, only influence the closest step
+        for(var j = 0; j < this.steps.length;j++){
+          var step = this.steps[j]
+          var d = p5.Vector.dist(employer.pos,step.pos);
+
+          // if this step is within the employer's employment diameter
+          // the employer will employ the migrant
+          if(employer.dMin > d){
+            migrant.employer = employer; 
+            migrant.employers[i]=true;
+            migrant.state = "transit";
+
+            closestStep = null;
+            break;
+
+          }else if(d < record){
+            // (A step in a migrant's path can be influenced by many employers each timestep)
+            // (An employer can only influence 1 step in a migrant's path each timestep)
+            // An employer influences the closest located step 
+            // that is inside it's influence diameter
+            // and outside it's employment diameter
+            // identify this step as potentially influenced for this timestep
+            closestStep = step;
+            record = d;
+          }
+        }
+
+        // if this employer influences a step in the migrant's path
+        // sum its direction with the step's other influcencers directions
+        // then we can find the average direction for the path's next step
+        // when the loop is complete
+        if(closestStep != null){
+          closestStep.dir.add(p5.Vector.sub(employer.pos,closestStep.pos).normalize());
+          closestStep.count++;
+        }
+      }
+    }
+
+
     // look at each intermediary
     for(var i = 0; i < p5i.intermediaries.length; i++){
       
@@ -73,21 +122,13 @@ function Path (p5i, migrant, pos, dir, network){
           // if this step is within the intermediary's death diameter
           if(intermediary.dMin > d){
             //stop adding steps to the migrant's path in the direction of this intermediary
-            closestStep = null;
             // do not revisit the intermediary again
+            closestStep = null;
             migrant.intermediaries[i]=true;
-            
-            // if this intermediary is an employer, employ this migrant
-            if(intermediary.hiring){
-              migrant.employer = intermediary; 
-              migrant.state = "transit";
-            }
-            break;
-
+           
           // if this this step is within the intermediary's influence diameter
           // and is the closest step without entering the death diameter
           }else if(d < record){
-            // identify this step the closest step to this intermediary
             record = d;
             closestStep = step;
           }
@@ -95,20 +136,15 @@ function Path (p5i, migrant, pos, dir, network){
 
         // if a (closest) step is influenced by this intermediary
         if(closestStep != null){
-          // determine the next step's direction
-          var nextDir = p5.Vector.sub(intermediary.pos,closestStep.pos);
-          // normalize this new direction to length 1
-          nextDir.normalize();
-          // add it to the closest step's direction
-          closestStep.dir.add(nextDir);
-          // increase the closest step's count by 1
+          closestStep.dir.add(p5.Vector.sub(intermediary.pos,closestStep.pos).normalize());
           closestStep.count++;
         }
       }
     }
 
-    // for any influenced branch add a new branch with the averaged direction
-    // if its influecing intermediaries
+    //---------------------------------------------------------------------------
+    // for any influenced ste add a new step with the averaged direction
+    // from all of its influencers
     for(var i = this.steps.length - 1; i >= 0; i--){
       var step = this.steps[i];
       if(step.count > 0){
@@ -118,6 +154,7 @@ function Path (p5i, migrant, pos, dir, network){
       }
     }
 
+    //---------------------------------------------------------------------------
     if(migrant.state == "transit"){
       var eRecord = 10000;
       var employerStep;

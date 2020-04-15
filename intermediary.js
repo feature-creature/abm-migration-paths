@@ -50,15 +50,28 @@ function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
   }
 
   this.recruitingWalk = function(){
-    this.randomWalk(
+      this.randomWalk(
       -1, 1, 0.5, p5i.destination[0][0]-this.d-300, p5i.destination[1][0],
       -1, 1, 0.5, p5i.destination[0][1]+this.d, p5i.destination[1][1]-this.d
     );
   } 
 
-
   this.randomWalk = function(xStepMin,xStepMax,xSpread,xMin,xMax,yStepMin,yStepMax,ySpread,yMin,yMax){
-    nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);
+    var validLocation = true;
+    var nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);
+    for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(nextMove,p5i.employers[j].pos) < p5i.employers[j].d*5)validLocation = false;
+    while(nextMove.x < xMin || nextMove.x > xMax || nextMove.y < yMin || nextMove.y > yMax || validLocation == false ){
+      validLocation = true;
+      nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);
+      for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(nextMove,p5i.employers[j].pos) < p5i.employers[j].d*5)validLocation = false;
+    }     
+    this.pos = nextMove;
+  }
+
+/*
+  this.randomWalk = function(xStepMin,xStepMax,xSpread,xMin,xMax,yStepMin,yStepMax,ySpread,yMin,yMax){
+    var nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);
     if((nextMove.x >= xMin && nextMove.x <= xMax) && (nextMove.y >= yMin && nextMove.y <= yMax))this.pos = nextMove;
   }
+*/
 }

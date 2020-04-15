@@ -11,10 +11,11 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   this.normalizedBool = function(x){return p5i.random() <= x;} 
   this.exampleBoo = this.normalizedBool(0.5); 
 
+  this.employers= [];
   this.intermediaries = [];
-  for(var i = 0; i < p5i.intermediaries.length; i++){
-    this.intermediaries.push(false);
-  }
+
+  for(var i = 0; i < p5i.employers.length; i++)this.employers.push(false);
+  for(var i = 0; i < p5i.intermediaries.length; i++)this.intermediaries.push(false);
 
   var parent = this;
   this.state = "potential";
@@ -116,10 +117,8 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
 
   this.transitWalk = function(){
     this.path.show();
-    if(p5i.frameCount % 3 == 0){
-      this.pos = this.path.steps[this.path.steps.length - 1 - this.states[this.state].transitWalkCount].pos;
-      if(this.states[this.state].transitWalkCount != this.path.steps.length - 1)this.states[this.state].transitWalkCount++;
-    } 
+    this.pos = this.path.steps[this.path.steps.length - 1 - this.states[this.state].transitWalkCount].pos;
+    if(this.states[this.state].transitWalkCount != this.path.steps.length - 1)this.states[this.state].transitWalkCount++;
 
     p5i.push();
     p5i.stroke(this.states.transit.stroke);
@@ -130,14 +129,14 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   }
 
   this.work = function(){
-    testX = p5i.random() >= 0.5 ? 3 :-3;
-    testX += this.pos.x;
-    testY = p5i.random() >= 0.5 ? 3 : -3;
-    testY += this.pos.y;
-    var test = p5i.createVector(testX,testY);
-    var d = p5.Vector.dist(test,this.employer.pos);
-    if(d < this.employer.dWorkPlace/2)this.pos.x = test.x;
-    if(d < this.employer.dWorkPlace/2)this.pos.y = test.y;
+    xTest = p5i.random() >= 0.5 ? 3 :-3;
+    xTest += this.pos.x;
+    yTest = p5i.random() >= 0.5 ? 3 : -3;
+    yTest += this.pos.y;
+    var posTest = p5i.createVector(xTest,yTest);
+    var d = p5.Vector.dist(posTest,this.employer.pos);
+    if(d < this.employer.dWorkPlace/2)this.pos.x = posTest.x;
+    if(d < this.employer.dWorkPlace/2)this.pos.y = posTest.y;
   }
 
   this.employedWalk = function(){

@@ -21,6 +21,7 @@ let migrationPathwaysABM = p5i => {
   var numOfIntermediaries = 90;
   var intermediaryDiameter = 15;
   
+  p5i.employers = [];
   var numOfEmployers = 4;
   var employerDiameter = 15;
 
@@ -37,42 +38,20 @@ let migrationPathwaysABM = p5i => {
     p5i.background(175);
 
     p5i.drawEnvironment();
-    for(var i = 0; i < numOfIntermediaries; i++){
-      p5i.intermediaries.push(
-        new Intermediary(p5i, 
-          p5i.random(p5i.destination[0][0]-300 - intermediaryDiameter, p5i.destination[1][0]-100), 
-          p5i.random(p5i.destination[0][1]+intermediaryDiameter, p5i.destination[1][1]-intermediaryDiameter),
-          0, 0, intermediaryDiameter)
-      );
-    };
-    
-    for(var i = 0; i < numOfEmployers; i++){
-      var tempNet = (i+1)/numOfEmployers <= 0.5? "a" : "b";
-      p5i.intermediaries.push(
-        new Employer(p5i, 
-          p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]-75), 
-          p5i.random(p5i.destination[0][1]+employerDiameter, p5i.destination[1][1]-employerDiameter),
-          0, 0, intermediaryDiameter,tempNet)
-      );
-    };
-
-    for(var i = 0; i < numOfMigrants; i++){
-      p5i.migrants.push(
-        new Migrant(p5i, 
-          p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 
-          p5i.random(p5i.origin[0][1]+migrantDiameter, p5i.origin[1][1]-migrantDiameter), 
-          0, 0, migrantDiameter)
-      );
-    };
-    
+    p5i.initEmployers();
+    p5i.initIntermediaries();
+    p5i.initMigrants();
     p5i.noLoop();
   }
 
 
   p5i.draw = function() {
     p5i.drawEnvironment();
+    for(var i = 0; i < p5i.employers.length; i++){p5i.employers[i].update();}
     for(var i = 0; i < p5i.intermediaries.length; i++){p5i.intermediaries[i].update();}
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].update();}
+
+    for(var i = 0; i < p5i.employers.length; i++){p5i.employers[i].show();}
     for(var i = 0; i < p5i.intermediaries.length; i++){p5i.intermediaries[i].show();}
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].show();}
     p5i.drawLabels();
@@ -114,6 +93,56 @@ let migrationPathwaysABM = p5i => {
     for(var i = 0; i < p5i.migrants.length; i++){totals[p5i.migrants[i].state]++;}
     p5i.logMigrantStates.push(totals);
   }
+
+  
+  p5i.initEmployers = function(){
+    for(var i = 0; i < numOfEmployers; i++){
+      var networkTemp = (i+1)/numOfEmployers <= 0.5? "a" : "b";
+      var validLocation = false;
+
+      while(validLocation == false){
+        validLocation = true;
+        var posTest = p5i.createVector(
+          p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]-(employerDiameter*5)),
+          p5i.random(p5i.destination[0][1]+(employerDiameter*5), p5i.destination[1][1]-(employerDiameter*5))
+        );
+        for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(posTest,p5i.employers[j].pos) < employerDiameter*10)validLocation = false;
+      }
+
+      p5i.employers.push(new Employer(p5i, posTest.x, posTest.y, 0, 0, intermediaryDiameter,networkTemp));
+    }
+  }
+
+
+  p5i.initIntermediaries = function(){
+    for(var i = 0; i < numOfIntermediaries; i++){
+      var validLocation = false;
+
+      while(validLocation == false){
+        validLocation = true;
+        var posTest = p5i.createVector(
+          p5i.random(p5i.destination[0][0]-300 - intermediaryDiameter, p5i.destination[1][0]-100), 
+          p5i.random(p5i.destination[0][1]+intermediaryDiameter, p5i.destination[1][1]-intermediaryDiameter)
+        );
+        for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(posTest,p5i.employers[j].pos) < employerDiameter*5)validLocation = false;
+      }
+
+      p5i.intermediaries.push(new Intermediary(p5i, posTest.x,posTest.y, 0, 0, intermediaryDiameter));
+    }
+  }
+
+
+  p5i.initMigrants = function(){
+   for(var i = 0; i < numOfMigrants; i++){
+    p5i.migrants.push(
+      new Migrant(p5i, 
+        p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 
+        p5i.random(p5i.origin[0][1]+migrantDiameter, p5i.origin[1][1]-migrantDiameter), 
+        0, 0, migrantDiameter)
+      );
+    }
+  }
+
 
 }
 
