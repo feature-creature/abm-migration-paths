@@ -8,7 +8,7 @@ let migrationPathwaysDescriptives = p5i => {
 
   var pause = false;
   var fr = 30;
-  var wEnv = 1920;
+  var wEnv = 1920;//1920;
   var hEnv = 200;
 
   p5i.setup = function() {

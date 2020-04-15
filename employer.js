@@ -16,7 +16,7 @@ function Employer (p5i,xPos,yPos,xDir,yDir,diameter,network){
   this.d = diameter;
   this.dWorkPlace = this.d*10;
   this.dMax = 350;
-  this.dMin = 5;//20
+  this.dMin = diameter*2;//20
 
   this.state = network;
   var parent = this;

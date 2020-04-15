@@ -51,7 +51,7 @@ function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
 
   this.recruitingWalk = function(){
       this.randomWalk(
-      -1, 1, 0.5, p5i.destination[0][0]-this.d-300, p5i.destination[1][0],
+      -1, 1, 0.5, p5i.destination[0][0]*0.7-this.d, p5i.destination[1][0],
       -1, 1, 0.5, p5i.destination[0][1]+this.d, p5i.destination[1][1]-this.d
     );
   } 

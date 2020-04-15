@@ -6,19 +6,19 @@
 let migrationPathwaysABM = p5i => {
   p5i.disableFriendlyErrors = true;
 
+  p5i.ticks = 3000;
   var pause = true;
   var fr = 60;
-  var wEnv = 1920;
-  var hEnv = 1080;
-  p5i.ticks = 3000;
+  var wEnv = 1920;//1920;
+  var hEnv = 1080;//1080;
   
 
   p5i.migrants = [];
-  var numOfMigrants = 200;
+  var numOfMigrants = 200;//200;
   var migrantDiameter = 15;
 
   p5i.intermediaries = [];
-  var numOfIntermediaries = 90;
+  var numOfIntermediaries = 90;//90;
   var intermediaryDiameter = 15;
   
   p5i.employers = [];
@@ -121,7 +121,7 @@ let migrationPathwaysABM = p5i => {
       while(validLocation == false){
         validLocation = true;
         var posTest = p5i.createVector(
-          p5i.random(p5i.destination[0][0]-300 - intermediaryDiameter, p5i.destination[1][0]-100), 
+          p5i.random(p5i.destination[0][0]*0.7 - intermediaryDiameter, p5i.destination[1][0]*0.9), 
           p5i.random(p5i.destination[0][1]+intermediaryDiameter, p5i.destination[1][1]-intermediaryDiameter)
         );
         for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(posTest,p5i.employers[j].pos) < employerDiameter*5)validLocation = false;

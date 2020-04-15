@@ -21,12 +21,12 @@ function Path (p5i, migrant, pos, dir, network){
   var parent = this;
   this.networks = {
     "a" : {
-      move:function(){parent.defaultWalk()},
+      move:function(){parent.grow()},
       color:p5i.color(255,255,255),
       stroke:p5i.color(75,75,75)
     },
     "b" : {
-      move:function(){parent.defaultWalk()},
+      move:function(){parent.grow()},
       color:p5i.color(0,0,0),
       stroke:p5i.color(75,75,75)
     }
@@ -35,7 +35,7 @@ function Path (p5i, migrant, pos, dir, network){
 
 
   this.update = function(){
-    this.states[this.state].move();
+    this.networks[this.state].move();
   };
 
 
@@ -44,9 +44,8 @@ function Path (p5i, migrant, pos, dir, network){
     p5i.noFill();
     p5i.strokeWeight(2);
     p5i.stroke(this.networks[this.network].color);
-    migrant.state == "brokered"? p5i.beginShape(p5i.POINTS) : p5i.beginShape();
-    //2
-    for(var i = 2; i < this.steps.length; i++){p5i.vertex(this.steps[i].pos.x,this.steps[i].pos.y);}
+    migrant.state == "brokered" ? p5i.beginShape(p5i.POINTS) : p5i.beginShape();
+    for(var i = 0; i < this.steps.length; i++){p5i.vertex(this.steps[i].pos.x,this.steps[i].pos.y);}
     p5i.endShape();
     p5i.pop();
   };
@@ -160,8 +159,8 @@ function Path (p5i, migrant, pos, dir, network){
       var employerStep;
       var shortestPath = [];
       
-      // find step that terminates at employer
-      for(var i = this.steps.length -1; i > 0; i--){
+      // find step that reached the employer
+      for(var i = this.steps.length -1; i >= 0; i--){
         var ed = p5.Vector.dist(migrant.employer.pos,this.steps[i].pos);
         if(ed < eRecord){
           eRecord = ed;
@@ -169,11 +168,9 @@ function Path (p5i, migrant, pos, dir, network){
         }
       };
 
-      // prune all alternative paths that do not lead to employer
+      // remove all steps that do not lead to employer
       shortestPath.push(employerStep);
-      while(shortestPath[shortestPath.length-1].parent != null){
-        shortestPath.push(shortestPath[shortestPath.length-1].parent);
-      }
+      while(shortestPath[shortestPath.length-1].parent != null)shortestPath.push(shortestPath[shortestPath.length-1].parent);
       this.steps = shortestPath;
     }
   };

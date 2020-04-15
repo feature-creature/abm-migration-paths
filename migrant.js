@@ -109,7 +109,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   };
 
 
-  this.findEmployer = function(){this.path.grow();};
+  this.findEmployer = function(){this.path.update();};
   
   
   this.brokeredWalk = function(){this.path.show();};
@@ -117,26 +117,28 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
 
   this.transitWalk = function(){
     this.path.show();
-    this.pos = this.path.steps[this.path.steps.length - 1 - this.states[this.state].transitWalkCount].pos;
-    if(this.states[this.state].transitWalkCount != this.path.steps.length - 1)this.states[this.state].transitWalkCount++;
 
+    this.pos = this.path.steps[this.path.steps.length - 1 - this.states[this.state].transitWalkCount].pos;
     p5i.push();
     p5i.stroke(this.states.transit.stroke);
     p5i.line(this.pos.x,this.pos.y,this.employer.pos.x,this.employer.pos.y);
     p5i.pop();
 
-    if(this.states[this.state].transitWalkCount == this.path.steps.length -1){this.state = "employed"}
+    
+    if(this.states[this.state].transitWalkCount != this.path.steps.length - 1)this.states[this.state].transitWalkCount++;//1
+    if(this.states[this.state].transitWalkCount == this.path.steps.length - 1){this.state = "employed"}
   }
 
+
   this.work = function(){
-    xTest = p5i.random() >= 0.5 ? 3 :-3;
-    xTest += this.pos.x;
-    yTest = p5i.random() >= 0.5 ? 3 : -3;
-    yTest += this.pos.y;
+    xTest = this.pos.x;
+    xTest += p5i.random() >= 0.5 ? 3 :-3;
+    yTest = this.pos.y;
+    yTest += p5i.random() >= 0.5 ? 3 : -3;
     var posTest = p5i.createVector(xTest,yTest);
     var d = p5.Vector.dist(posTest,this.employer.pos);
-    if(d < this.employer.dWorkPlace/2)this.pos.x = posTest.x;
-    if(d < this.employer.dWorkPlace/2)this.pos.y = posTest.y;
+    if(d < this.employer.dWorkPlace/2 && d > this.employer.d*2)this.pos.x = posTest.x;
+    if(d < this.employer.dWorkPlace/2 && d > this.employer.d*2)this.pos.y = posTest.y;
   }
 
   this.employedWalk = function(){
