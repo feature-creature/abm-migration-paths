@@ -55,51 +55,53 @@ let migrationPathwaysDescriptives = p5i => {
       p5i.textAlign(p5i.RIGHT);
       p5i.translate(0,25);
     
-      p5i.push();
-        p5i.translate(225,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].potential + " Potential Migrants", 0, 0);
-        p5i.stroke(abm.migrants[0].states.potential.stroke);
-        p5i.fill(abm.migrants[0].states.potential.color);
-        p5i.ellipse(17,-8,15,15);
-      p5i.pop();
     
-      p5i.push();
-        p5i.translate(wEnv * 0.35,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].seeking + " Seeking Migrants", 0, 0);
-        p5i.strokeWeight(3);
-        p5i.stroke(abm.migrants[0].states.seeking.stroke);
-        p5i.fill(abm.migrants[0].states.seeking.color);
-        p5i.ellipse(17,-8,15,15);
-      p5i.pop();
+      if(abm.migrants.length > 0){
+        p5i.push();
+          p5i.translate(225,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].potential + " Potential Migrants", 0, 0);
+          p5i.stroke(abm.migrants[0].states.potential.stroke);
+          p5i.fill(abm.migrants[0].states.potential.color);
+          p5i.ellipse(17,-8,15,15);
+        p5i.pop();
+      
+        p5i.push();
+          p5i.translate(wEnv * 0.35,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].seeking + " Seeking Migrants", 0, 0);
+          p5i.strokeWeight(3);
+          p5i.stroke(abm.migrants[0].states.seeking.stroke);
+          p5i.fill(abm.migrants[0].states.seeking.color);
+          p5i.ellipse(17,-8,15,15);
+        p5i.pop();
 
-      p5i.push();
-        p5i.translate(wEnv * 0.55,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].brokered + " Brokered Migrants", 0, 0);
-        p5i.strokeWeight(3);
-        p5i.stroke(abm.migrants[0].states.brokered.stroke);
-        p5i.fill(abm.migrants[0].states.brokered.color);
-        p5i.ellipse(17,-8,15,15);
-      p5i.pop();
+        p5i.push();
+          p5i.translate(wEnv * 0.55,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].brokered + " Brokered Migrants", 0, 0);
+          p5i.strokeWeight(3);
+          p5i.stroke(abm.migrants[0].states.brokered.stroke);
+          p5i.fill(abm.migrants[0].states.brokered.color);
+          p5i.ellipse(17,-8,15,15);
+        p5i.pop();
 
-      p5i.push();
-        p5i.translate(wEnv * 0.75,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].transit + " Transit Migrants", 0, 0);
-        p5i.strokeWeight(3);
-        p5i.stroke(abm.migrants[0].states.transit.stroke);
-        p5i.fill(abm.migrants[0].states.transit.color);
-        p5i.line(17, -8, 37, -8);
-        p5i.ellipse(17,-8,15,15);
-      p5i.pop();
+        p5i.push();
+          p5i.translate(wEnv * 0.75,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].transit + " Transit Migrants", 0, 0);
+          p5i.strokeWeight(3);
+          p5i.stroke(abm.migrants[0].states.transit.stroke);
+          p5i.fill(abm.migrants[0].states.transit.color);
+          p5i.line(17, -8, 37, -8);
+          p5i.ellipse(17,-8,15,15);
+        p5i.pop();
 
-      p5i.push();
-        p5i.translate(wEnv - 35,0);
-        p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].employed + " Employed Migrants", 0, 0);
-        p5i.strokeWeight(3);
-        p5i.stroke(abm.migrants[0].states.employed.stroke);
-        p5i.fill(abm.migrants[0].states.employed.color);
-        p5i.ellipse(17,-8,15,15);
-      p5i.pop();
-
+        p5i.push();
+          p5i.translate(wEnv - 35,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].employed + " Employed Migrants", 0, 0);
+          p5i.strokeWeight(3);
+          p5i.stroke(abm.migrants[0].states.employed.stroke);
+          p5i.fill(abm.migrants[0].states.employed.color);
+          p5i.ellipse(17,-8,15,15);
+        p5i.pop();
+      }
     p5i.pop();
   }
 
@@ -109,91 +111,93 @@ let migrationPathwaysDescriptives = p5i => {
       p5i.translate(10,hEnv-35);
       p5i.line(-2,0,-2,-95);
       p5i.line(-2,2,wEnv-20,2);
-      //---
-      p5i.push();
-        p5i.fill(abm.migrants[0].states.employed.stroke);
-        p5i.noStroke();
-        p5i.beginShape();
-        p5i.vertex(0,-95);
-        for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1), 
-            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].employed,0,abm.migrants.length,0,-95));
-        }
-        p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
-        p5i.vertex(0,0);
-        p5i.endShape(p5i.CLOSE);
-      p5i.pop();
 
-      //---
-      p5i.push();
-        p5i.fill(abm.migrants[0].states.transit.stroke);
-        p5i.noStroke();
-        p5i.beginShape();
-        p5i.vertex(0,-95);
-        for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
-            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95));
-        }
-        p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
-        p5i.vertex(0,0);
-        p5i.endShape(p5i.CLOSE);
-      p5i.pop();
+      if(abm.migrants.length > 0){
+        //---
+        p5i.push();
+          p5i.fill(abm.migrants[0].states.employed.stroke);
+          p5i.noStroke();
+          p5i.beginShape();
+          p5i.vertex(0,-95);
+          for(var i = 0; i < abm.logMigrantStates.length;i++){
+            p5i.vertex((wEnv-20)/abm.ticks*(i+1), 
+              p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].employed,0,abm.migrants.length,0,-95));
+          }
+          p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+          p5i.vertex(0,0);
+          p5i.endShape(p5i.CLOSE);
+        p5i.pop();
 
-      //---
-      p5i.push();
-        p5i.fill(abm.migrants[0].states.brokered.color);
-        p5i.noStroke();
-        p5i.beginShape();
-        p5i.vertex(0,-95);
-        for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
-            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95));
-        }
-        p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
-        p5i.vertex(0,0);
-        p5i.endShape(p5i.CLOSE);
-      p5i.pop();
+        //---
+        p5i.push();
+          p5i.fill(abm.migrants[0].states.transit.stroke);
+          p5i.noStroke();
+          p5i.beginShape();
+          p5i.vertex(0,-95);
+          for(var i = 0; i < abm.logMigrantStates.length;i++){
+            p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+              p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95));
+          }
+          p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+          p5i.vertex(0,0);
+          p5i.endShape(p5i.CLOSE);
+        p5i.pop();
 
-      //---
-      p5i.push();
-        p5i.fill(abm.migrants[0].states.seeking.color);
-        p5i.noStroke();
-        p5i.beginShape();
-        p5i.vertex(0,-95);
-        for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
-            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
-            + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95));
-        }
-        p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
-        p5i.vertex(0,0);
-        p5i.endShape(p5i.CLOSE);
-      p5i.pop();
+        //---
+        p5i.push();
+          p5i.fill(abm.migrants[0].states.brokered.color);
+          p5i.noStroke();
+          p5i.beginShape();
+          p5i.vertex(0,-95);
+          for(var i = 0; i < abm.logMigrantStates.length;i++){
+            p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+              p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95));
+          }
+          p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+          p5i.vertex(0,0);
+          p5i.endShape(p5i.CLOSE);
+        p5i.pop();
 
-      //---
-      p5i.push();
-        p5i.fill(abm.migrants[0].states.potential.color);
-        p5i.noStroke();
-        p5i.beginShape();
-        p5i.vertex(0,-95);
-        for(var i = 0; i < abm.logMigrantStates.length;i++){
-          p5i.vertex((wEnv-20)/abm.ticks*(i+1),
-            p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95));
-        }
-        p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
-        p5i.vertex(0,0);
-        p5i.endShape(p5i.CLOSE);
-      p5i.pop();
+        //---
+        p5i.push();
+          p5i.fill(abm.migrants[0].states.seeking.color);
+          p5i.noStroke();
+          p5i.beginShape();
+          p5i.vertex(0,-95);
+          for(var i = 0; i < abm.logMigrantStates.length;i++){
+            p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+              p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95));
+          }
+          p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+          p5i.vertex(0,0);
+          p5i.endShape(p5i.CLOSE);
+        p5i.pop();
 
+        //---
+        p5i.push();
+          p5i.fill(abm.migrants[0].states.potential.color);
+          p5i.noStroke();
+          p5i.beginShape();
+          p5i.vertex(0,-95);
+          for(var i = 0; i < abm.logMigrantStates.length;i++){
+            p5i.vertex((wEnv-20)/abm.ticks*(i+1),
+              p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95));
+          }
+          p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+          p5i.vertex(0,0);
+          p5i.endShape(p5i.CLOSE);
+        p5i.pop();
+      }
     p5i.pop();
   }
 

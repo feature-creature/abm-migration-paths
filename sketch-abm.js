@@ -9,39 +9,59 @@ let migrationPathwaysABM = p5i => {
   p5i.ticks = 3000;
   var pause = true;
   var fr = 60;
-  var wEnv = 1920;//1920;
-  var hEnv = 1080;//1080;
-  
-
-  p5i.migrants = [];
-  var numOfMigrants = 200;//200;
-  var migrantDiameter = 15;
-
-  p5i.intermediaries = [];
-  var numOfIntermediaries = 90;//90;
-  var intermediaryDiameter = 15;
-  
-  p5i.employers = [];
-  var numOfEmployers = 4;
-  var employerDiameter = 15;
-
-  p5i.logMigrantStates = [];
+  var wEnv = 1920;
+  var hEnv = 1080;
 
   p5i.origin = [[0,0],[wEnv/2,hEnv]];
   p5i.destination = [[wEnv/2,0],[wEnv,hEnv]];
 
+  p5i.logMigrantStates = [];
+  p5i.migrants = [];
+  p5i.numOfMigrants = 200;
+  var migrantDiameter = 15;
+
+  p5i.intermediaries = [];
+  p5i.numOfIntermediaries = 90;
+  var intermediaryDiameter = 15;
+  
+  p5i.employers = [];
+  p5i.numOfEmployers = 4;
+  var employerDiameter = 15;
+
+
   p5i.setup = function() {
     var canvas = p5i.createCanvas(wEnv, hEnv,p5i.P2D);
     canvas.mousePressed(p5i.pauseSketch);
+    p5i.background(175);
     p5i.frameRate(fr);
     p5i.textSize(22);
-    p5i.background(175);
 
-    p5i.drawEnvironment();
-    p5i.initEmployers();
-    p5i.initIntermediaries();
-    p5i.initMigrants();
+    p5i.select("#start").mousePressed(function(){p5i.pauseSketch()});
+    p5i.select("#export").mousePressed(function(){p5i.exportData()});
+
+    numOfTicks = p5i.select("#numOfTicks");
+    numOfTicks.touchEnded(p5i.setSketch);
+    numOfTicks.mouseReleased(p5i.setSketch);
+    numOfTicks.value(p5i.ticks);
+
+    numOfMigrants = p5i.select("#numOfMigrants");
+    numOfMigrants.touchEnded(p5i.setSketch);
+    numOfMigrants.mouseReleased(p5i.setSketch);
+    numOfMigrants.value(p5i.numOfMigrants);
+
+    numOfIntermediaries = p5i.select("#numOfIntermediaries");
+    numOfIntermediaries.touchEnded(p5i.setSketch);
+    numOfIntermediaries.mouseReleased(p5i.setSketch);
+    numOfIntermediaries.value(p5i.numOfIntermediaries);
+
+    numOfEmployers = p5i.select("#numOfEmployers");
+    numOfEmployers.touchEnded(p5i.setSketch);
+    numOfEmployers.mouseReleased(p5i.setSketch);
+    numOfEmployers.value(p5i.numOfEmployers);
+    
+    p5i.setSketch();
     p5i.noLoop();
+
   }
 
 
@@ -57,6 +77,25 @@ let migrationPathwaysABM = p5i => {
     p5i.drawLabels();
     p5i.logStates();
     p5i.isCompleted();
+  }
+
+
+  p5i.setSketch = function(){
+    pause = true;
+    p5i.select("#start").html("start");
+
+    p5i.drawEnvironment();
+    p5i.ticks = numOfTicks.value();
+    p5i.numOfMigrants = numOfMigrants.value();
+    p5i.numOfIntermediaries = numOfIntermediaries.value();
+    p5i.numOfEmployers = numOfEmployers.value();
+    p5i.select("#currentNumOfTicks").html(numOfTicks.value() + " ");
+    p5i.select("#currentNumOfMigrants").html(numOfMigrants.value() + " ");
+    p5i.select("#currentNumOfIntermediaries").html(numOfIntermediaries.value() + " ");
+    p5i.select("#currentNumOfEmployers").html(numOfEmployers.value() + " ");
+    p5i.populate();
+    p5i.noLoop();
+    p5i.redraw();
   }
 
 
@@ -82,10 +121,11 @@ let migrationPathwaysABM = p5i => {
   p5i.pauseSketch = function(){
     pause = pause ? false : true;
     pause?p5i.noLoop():p5i.loop();
+    pause ? p5i.select("#start").html("start") : p5i.select("#start").html("stop");
   }
 
 
-  p5i.isCompleted = function(){if(p5i.frameCount>=p5i.ticks)p5i.noLoop();}
+  p5i.isCompleted = function(){if(p5i.logMigrantStates.length>=p5i.ticks)p5i.noLoop();}
 
 
   p5i.logStates = function(){
@@ -94,12 +134,33 @@ let migrationPathwaysABM = p5i => {
     p5i.logMigrantStates.push(totals);
   }
 
-  
-  p5i.initEmployers = function(){
-    for(var i = 0; i < numOfEmployers; i++){
-      var networkTemp = (i+1)/numOfEmployers <= 0.5? "a" : "b";
-      var validLocation = false;
+ 
+  p5i.exportData = function(){
+    p5i.saveJSON(p5i.logMigrantStates,
+      "t-" + p5i.ticks + 
+      "-m-" + numOfMigrants.value() +
+      "-i-" + numOfIntermediaries.value() +
+      "-e-" + numOfEmployers.value() +
+      Date.now() + 
+      ".json"
+    );
+  }
 
+
+  p5i.populate = function(){
+    p5i.logMigrantStates = [];
+    p5i.initEmployers();
+    p5i.initIntermediaries();
+    p5i.initMigrants();
+    p5i.noLoop();
+  }
+
+ 
+  p5i.initEmployers = function(){
+    p5i.employers = [];
+    for(var i = 0; i < p5i.numOfEmployers; i++){
+      var networkTemp = (i+1)/p5i.numOfEmployers <= 0.5? "a" : "b";
+      var validLocation = false;
       while(validLocation == false){
         validLocation = true;
         var posTest = p5i.createVector(
@@ -115,9 +176,9 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.initIntermediaries = function(){
-    for(var i = 0; i < numOfIntermediaries; i++){
+    p5i.intermediaries = [];
+    for(var i = 0; i < p5i.numOfIntermediaries; i++){
       var validLocation = false;
-
       while(validLocation == false){
         validLocation = true;
         var posTest = p5i.createVector(
@@ -133,7 +194,8 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.initMigrants = function(){
-   for(var i = 0; i < numOfMigrants; i++){
+    p5i.migrants = [];
+    for(var i = 0; i < p5i.numOfMigrants; i++){
     p5i.migrants.push(
       new Migrant(p5i, 
         p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 

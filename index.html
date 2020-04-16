@@ -12,17 +12,102 @@
     <script language="javascript" type="text/javascript" src="sketch-descriptives.js"></script>
     <style>
       canvas{border:2px solid black;}
-      /*
-      body{
+      canvas{
         zoom: 0.5; 
         -moz-transform: scale(0.5); 
         -moz-transform-origin: 0 0;
       }
-      */
+      input[type="checkbox"]{height: 2em;}	
+      #sketch1 div,canvas,.abm-controls{display:block;margin:0 auto;}
+      section#sketch1{margin-bottom:5em;}
+      label{width: 110px;display:inline;}
+      span.max{float:right;}
+      button{display:inline;width:30%;margin:1%;height:3em;}
+      input{
+        width:960px;
+        display:block;
+        margin:0.5em 0;
+      }
+      .abm-controls{
+        width:960px;
+        margin-top:17px;
+        background:#afafaf;
+        border-top:0.75em white solid;
+      }
+      /*Chrome*/
+      @media screen and (-webkit-min-device-pixel-ratio:0) {
+
+        input#numOfCowards[type='range']::-webkit-slider-thumb {
+          box-shadow: -960px 0 0 960px #000000 !important;
+        }
+
+        input[type='range']::-webkit-slider-thumb {
+          box-shadow: -960 0 0 960px #fff;
+          background: rgb(220, 40, 40);
+          -webkit-appearance: none;
+          cursor: ew-resize;
+          height: 10px;
+          width: 10px;
+        }
+        
+        input[type='range']{ 
+          overflow: hidden;
+          -webkit-appearance: none;
+          background-color: #d8d8d8;
+        }
+          
+        input[type='range']::-webkit-slider-runnable-track {
+          height: 10px;
+          -webkit-appearance: none;
+          color: #d8d8d8;
+          margin-top: -1px;
+        }
+      }
+      /** FF*/
+      input[type="range"]::-moz-range-progress {
+        background-color: #fff; 
+        height:19px;
+      }
+      input#numOfCowards[type="range"]::-moz-range-progress {
+        background-color: #000000 !important; 
+      }
+      input[type="range"]::-moz-range-track {  
+        background-color: #d8d8d8;
+      }
+      /* IE*/
+      input[type="range"]::-ms-fill-lower {
+        background-color: #d8d8d8; 
+      }
+      input[type="range"]::-ms-fill-upper {  
+        background-color: #d8d8d8;
+      }
     </style>
   </head>
   <body>
+    <h1>Migration Pathways</h1>
     <div id="abm-main"></div>
     <div id="abm-data"></div>
+    <div class="abm-controls">
+      <div>
+        <label for="ticks"><span id="currentNumOfTicks"></span>Time Steps<span class="max">3000</span></label>
+        <input  name="ticks" id="numOfTicks" type="range" step="5" min="0" max="3000">
+      </div>
+      <div>
+        <label for="migrant"><span id="currentNumOfMigrants"></span>Migrants<span class="max">350</span></label>
+        <input name="migrant" id="numOfMigrants" type="range" step="1" min="1" max="350">
+        <label for="intermediary"><span id="currentNumOfIntermediaries"></span>Intermediaries<span class="max">150</span></label>
+        <input name="intermediary" id="numOfIntermediaries" type="range" step="1" min="1" max="150">
+        <label for="employer"><span id="currentNumOfEmployers"></span>Employers<span class="max">6</span></label>
+        <input name="employer" id="numOfEmployers" type="range" step="1" min="1" max="6">
+        <label for="logic">Toggle Logic</label>
+        <input name="logic" id="checked" type="checkbox" name="guidelines" checked>
+      </div>
+      <div>
+        <button id="start">start</button>
+       <button id="preset11">restart</button>
+        <button id="export">export data</button>
+      </div>
+    <div>
+
   </body>
 </html>
