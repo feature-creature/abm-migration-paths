@@ -6,7 +6,6 @@
 function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
 
   this.pos = p5i.createVector(xPos,yPos);
-  this.dir = p5i.createVector(xDir,yDir);
   this.normalizedBool = function(x){return Math.random() <= x;} 
   this.exampleBoo = this.normalizedBool(0.5); 
   this.network = p5i.random() <= 0.5 ? "a" : "b";
