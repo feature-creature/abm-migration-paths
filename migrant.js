@@ -4,58 +4,53 @@
  */
 
 function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
-
   this.pos = p5i.createVector(xPos,yPos);
-  this.dir = p5i.createVector(xDir,yDir);
   this.d = diameter;
-  this.normalizedBool = function(x){return p5i.random() <= x;} 
-  this.exampleBoo = this.normalizedBool(0.5); 
+  this.state = "potential";
+
 
   this.employers= [];
   this.intermediaries = [];
-
   for(var i = 0; i < p5i.employers.length; i++)this.employers.push(false);
   for(var i = 0; i < p5i.intermediaries.length; i++)this.intermediaries.push(false);
 
+
   var parent = this;
-  this.state = "potential";
   this.states= {
-    "potential":
-      {
-        logic:function(){parent.isSeeking()},
-        move:function(){parent.potentialWalk()},
-        color:p5i.color(255),
-        stroke:p5i.color(255),
-      },
-    "seeking":
-      {
-        logic:function(){parent.hasFoundIntermediary()},
-        move:function(){parent.seekingWalk()},  
-        color:p5i.color(255,174,66,255),
-        stroke:p5i.color(255),
-      },
-    "brokered":
-      {
-        logic:function(){parent.findEmployer()},
-        move:function(){parent.brokeredWalk()}, 
-        color:p5i.color(0,174,66,255),
-        stroke:p5i.color(0,255,255,255),
-      },
-    "transit":
-      {
-        logic:function(){},
-        move:function(){parent.transitWalk()}, 
-        color:p5i.color(255,174,66,255),
-        stroke:p5i.color(200,255,255,255),
-        transitWalkCount:0
-      },
-    "employed":
-      {
-        logic:function(){parent.work()},
-        move:function(){parent.employedWalk()},    
-        color:p5i.color(255,174,66,255),
-        stroke:p5i.color(0,0,255,255),
-      }
+    "potential":{
+      logic:function(){parent.isSeeking()},
+      move:function(){parent.potentialWalk()},
+      color:p5i.color(255,200,100),
+      stroke:p5i.color(255),
+    },
+    "seeking":{
+      logic:function(){parent.hasFoundIntermediary()},
+      move:function(){parent.seekingWalk()},  
+      color:p5i.color(255),
+      stroke:p5i.color(255),
+    },
+    "brokered":{
+      logic:function(){parent.findEmployer()},
+      move:function(){parent.brokeredWalk()}, 
+      color:p5i.color(0,174,66,255),
+      stroke:p5i.color(0,255,255,255),
+      strokeWeight:3,
+    },
+    "transit":{
+      logic:function(){},
+      move:function(){parent.transitWalk()}, 
+      color:p5i.color(255,174,66,255),
+      stroke:p5i.color(200,255,255,255),
+      strokeWeight:2,
+      transitWalkCount:0,
+    },
+    "employed":{
+      logic:function(){parent.work()},
+      move:function(){parent.employedWalk()},    
+      color:p5i.color(255,174,66,255),
+      stroke:p5i.color(0,0,255,255),
+      strokeWeight:2,
+    }
   };
 
 
@@ -76,6 +71,10 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   };
 
 
+  // potential -------------------
+
+  this.isSeeking = function(){if(this.normalizedBool(0.000125)) this.state = "seeking";}
+  
   this.potentialWalk = function(){
     this.randomWalk(
       -3, 3, 0.5, p5i.origin[0][0]+this.d, p5i.origin[1][0],
@@ -84,16 +83,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
   };
 
 
-  this.isSeeking = function(){if(this.normalizedBool(0.000125))this.state = "seeking";} //0.000125
-
-
-  this.seekingWalk = function(){
-    this.randomWalk(
-      -1, 3, 0.5, p5i.origin[0][0]+this.d, p5i.origin[1][0],
-      -3, 3, 0.5, p5i.origin[0][1]+this.d, p5i.origin[1][1]-this.d
-    );
-  };
-
+  // seeking -------------------
 
   this.hasFoundIntermediary = function(){
     for(var i = 0; i < p5i.intermediaries.length; i++){
@@ -108,12 +98,22 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
     }
   };
 
+  this.seekingWalk = function(){
+    this.randomWalk(
+      -1, 3, 0.5, p5i.origin[0][0]+this.d, p5i.origin[1][0],
+      -3, 3, 0.5, p5i.origin[0][1]+this.d, p5i.origin[1][1]-this.d
+    );
+  };
+
+
+  // brokered -------------------
 
   this.findEmployer = function(){this.path.update();};
   
-  
   this.brokeredWalk = function(){this.path.show();};
 
+
+  // transit -------------------
 
   this.transitWalk = function(){
     this.path.show();
@@ -129,6 +129,7 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
     if(this.states[this.state].transitWalkCount == this.path.steps.length - 1){this.state = "employed"}
   }
 
+  // employed -------------------
 
   this.work = function(){
     xTest = this.pos.x;
@@ -146,8 +147,12 @@ function Migrant (p5i,xPos,yPos,xDir,yDir,diameter){
     this.show();
   };
 
+
+  this.normalizedBool = function(x){return p5i.random() <= x;} 
+
   this.randomWalk = function(xStepMin,xStepMax,xSpread,xMin,xMax,yStepMin,yStepMax,ySpread,yMin,yMax){
     nextMove = this.pos.copy().add(p5i.random() >= xSpread ? xStepMin : xStepMax,p5i.random() >= ySpread ? yStepMin : yStepMax);
     if((nextMove.x >= xMin && nextMove.x <= xMax) && (nextMove.y >= yMin && nextMove.y <= yMax))this.pos = nextMove;
   };
+  
 }
