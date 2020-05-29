@@ -24,7 +24,7 @@ let migrationPathwaysDescriptives = p5i => {
     p5i.drawEnvironment();
     p5i.drawTrendlines();
     p5i.drawLabels();
-    if(abm.logMigrantStates.length == abm.ticks)p5i.noLoop();
+    //if(abm.logMigrantStates.length == abm.ticks)p5i.noLoop();
   }
 
 
@@ -66,7 +66,7 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.pop();
       
         p5i.push();
-          p5i.translate(wEnv * 0.35,0);
+          p5i.translate(wEnv * 0.28,0);
           p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].seeking + " Seeking Migrants", 0, 0);
           p5i.strokeWeight(3);
           p5i.stroke(abm.migrants[0].states.seeking.stroke);
@@ -75,7 +75,7 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.pop();
 
         p5i.push();
-          p5i.translate(wEnv * 0.55,0);
+          p5i.translate(wEnv * 0.45,0);
           p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].brokered + " Brokered Migrants", 0, 0);
           p5i.strokeWeight(3);
           p5i.stroke(abm.migrants[0].states.brokered.stroke);
@@ -84,8 +84,8 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.pop();
 
         p5i.push();
-          p5i.translate(wEnv * 0.75,0);
-          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].transit + " Transit Migrants", 0, 0);
+          p5i.translate(wEnv * 0.64,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].transit + " Transiting Migrants", 0, 0);
           p5i.strokeWeight(3);
           p5i.stroke(abm.migrants[0].states.transit.stroke);
           p5i.fill(abm.migrants[0].states.transit.color);
@@ -94,14 +94,23 @@ let migrationPathwaysDescriptives = p5i => {
         p5i.pop();
 
         p5i.push();
-          p5i.translate(wEnv - 35,0);
-          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].employed + " Employed Migrants", 0, 0);
+          p5i.translate(wEnv * 0.81,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].employed + " Working Migrants", 0, 0);
           p5i.strokeWeight(3);
           p5i.stroke(abm.migrants[0].states.employed.stroke);
           p5i.fill(abm.migrants[0].states.employed.color);
           p5i.ellipse(17,-8,15,15);
         p5i.pop();
-      }
+ 
+        p5i.push();
+          p5i.translate(wEnv - 35,0);
+          p5i.text(abm.logMigrantStates[abm.logMigrantStates.length-1].returning + " Returning Migrants", 0, 0);
+          p5i.strokeWeight(3);
+          p5i.stroke(abm.migrants[0].states.returning.stroke);
+          p5i.fill(abm.migrants[0].states.returning.color);
+          p5i.ellipse(17,-8,15,15);
+        p5i.pop();
+     }
     p5i.pop();
   }
 
@@ -113,9 +122,29 @@ let migrationPathwaysDescriptives = p5i => {
       p5i.line(-2,2,wEnv-20,2);
 
       if(abm.migrants.length > 0){
-        //---
+        //--- RETURNING
         p5i.push();
-          p5i.fill(abm.migrants[0].states.employed.stroke);
+          p5i.fill(abm.migrants[0].states.returning.stroke);
+          p5i.noStroke();
+          p5i.beginShape();
+          p5i.vertex(0,-95);
+          for(var i = 0; i < abm.logMigrantStates.length;i++){
+            p5i.vertex((wEnv-20)/abm.ticks*(i+1), 
+              p5i.map(abm.logMigrantStates[i].potential,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].seeking,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].brokered,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].transit,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].employed,0,abm.migrants.length,0,-95)
+              + p5i.map(abm.logMigrantStates[i].returning,0,abm.migrants.length,0,-95));
+          }
+          p5i.vertex((wEnv-20)/abm.ticks*(i), 0);
+          p5i.vertex(0,0);
+          p5i.endShape(p5i.CLOSE);
+        p5i.pop();
+
+       //--- EMPLOYED
+        p5i.push();
+          p5i.fill(abm.migrants[0].states.employed.color);
           p5i.noStroke();
           p5i.beginShape();
           p5i.vertex(0,-95);
@@ -132,7 +161,7 @@ let migrationPathwaysDescriptives = p5i => {
           p5i.endShape(p5i.CLOSE);
         p5i.pop();
 
-        //---
+        //--- TRANSIT
         p5i.push();
           p5i.fill(abm.migrants[0].states.transit.stroke);
           p5i.noStroke();
@@ -150,7 +179,7 @@ let migrationPathwaysDescriptives = p5i => {
           p5i.endShape(p5i.CLOSE);
         p5i.pop();
 
-        //---
+        //--- BROKERED
         p5i.push();
           p5i.fill(abm.migrants[0].states.brokered.color);
           p5i.noStroke();
@@ -167,9 +196,9 @@ let migrationPathwaysDescriptives = p5i => {
           p5i.endShape(p5i.CLOSE);
         p5i.pop();
 
-        //---
+        //--- SEEKING
         p5i.push();
-          p5i.fill(abm.migrants[0].states.seeking.color);
+          p5i.fill(abm.migrants[0].states.seeking.stroke);
           p5i.noStroke();
           p5i.beginShape();
           p5i.vertex(0,-95);
@@ -183,7 +212,7 @@ let migrationPathwaysDescriptives = p5i => {
           p5i.endShape(p5i.CLOSE);
         p5i.pop();
 
-        //---
+        //--- POTENTIAL
         p5i.push();
           p5i.fill(abm.migrants[0].states.potential.color);
           p5i.noStroke();

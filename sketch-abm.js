@@ -17,15 +17,15 @@ let migrationPathwaysABM = p5i => {
 
   p5i.logMigrantStates = [];
   p5i.migrants = [];
-  p5i.numOfMigrants = 200;
+  p5i.numOfMigrants = 185;//200;
   var migrantDiameter = 15;
 
   p5i.intermediaries = [];
-  p5i.numOfIntermediaries = 90;
+  p5i.numOfIntermediaries = 100;//90;
   var intermediaryDiameter = 15;
   
   p5i.employers = [];
-  p5i.numOfEmployers = 4;
+  p5i.numOfEmployers = 4;//4;
   var employerDiameter = 15;
 
 
@@ -34,7 +34,7 @@ let migrationPathwaysABM = p5i => {
     canvas.mousePressed(p5i.pauseSketch);
     p5i.background(175);
     p5i.frameRate(fr);
-    p5i.textSize(22);
+    p5i.textSize(30);
 
     p5i.select("#start").mousePressed(function(){p5i.pauseSketch()});
     p5i.select("#export").mousePressed(function(){p5i.exportData()});
@@ -60,9 +60,11 @@ let migrationPathwaysABM = p5i => {
     numOfEmployers.value(p5i.numOfEmployers);
     
     p5i.setSketch();
-    p5i.noLoop();
 
-  }
+    //p5i.noLoop();
+    p5i.loop();
+    pause = false;
+}
 
 
   p5i.draw = function() {
@@ -70,6 +72,12 @@ let migrationPathwaysABM = p5i => {
     for(var i = 0; i < p5i.employers.length; i++){p5i.employers[i].update();}
     for(var i = 0; i < p5i.intermediaries.length; i++){p5i.intermediaries[i].update();}
     for(var i = 0; i < p5i.migrants.length; i++){p5i.migrants[i].update();}
+
+    for(var i = 0; i < p5i.migrants.length; i++){
+      p5i.push();
+      for(var j = 0; j < p5i.migrants[i].paths.length; j++)p5i.migrants[i].paths[j].show();
+      p5i.pop();
+    }
 
     for(var i = 0; i < p5i.employers.length; i++){p5i.employers[i].show();}
     for(var i = 0; i < p5i.intermediaries.length; i++){p5i.intermediaries[i].show();}
@@ -81,9 +89,15 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.setSketch = function(){
+    p5i.logMigrantStates = [];
     pause = true;
     p5i.select("#start").html("start");
 
+    p5i.push();
+    p5i.fill(175);
+    p5i.rect(0,0,wEnv,hEnv);
+    p5i.pop();
+    
     p5i.drawEnvironment();
     p5i.ticks = numOfTicks.value();
     p5i.numOfMigrants = numOfMigrants.value();
@@ -100,7 +114,7 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.drawEnvironment = function(){
-    p5i.background(175);
+    p5i.background(150);
     p5i.push();
     p5i.line(p5i.origin[1][0],p5i.origin[0][1],p5i.origin[1][0],p5i.origin[1][1]);
     p5i.pop();
@@ -129,7 +143,7 @@ let migrationPathwaysABM = p5i => {
 
 
   p5i.logStates = function(){
-    var totals = {"potential":0,"seeking":0,"brokered":0,"transit":0,"employed":0,};
+    var totals = {"potential":0,"seeking":0,"brokered":0,"transit":0,"employed":0,"returning":0};
     for(var i = 0; i < p5i.migrants.length; i++){totals[p5i.migrants[i].state]++;}
     p5i.logMigrantStates.push(totals);
   }
@@ -160,17 +174,21 @@ let migrationPathwaysABM = p5i => {
     p5i.employers = [];
     for(var i = 0; i < p5i.numOfEmployers; i++){
       var networkTemp = (i+1)/p5i.numOfEmployers <= 0.5? "a" : "b";
+      var maxRatio = p5i.map(p5i.numOfEmployers,2,6,30,10);
+      var maxNumOfEmployeesTemp = Math.floor(p5i.random(8,maxRatio));
       var validLocation = false;
       while(validLocation == false){
         validLocation = true;
         var posTest = p5i.createVector(
-          p5i.random(p5i.destination[0][0] *1.75, p5i.destination[1][0]-(employerDiameter*5)),
-          p5i.random(p5i.destination[0][1]+(employerDiameter*5), p5i.destination[1][1]-(employerDiameter*5))
+          p5i.random(p5i.destination[0][0] *1.75,p5i.destination[1][0]-(maxNumOfEmployeesTemp*10)),
+          p5i.random(p5i.destination[0][1]+(maxNumOfEmployeesTemp*10), p5i.destination[1][1]-(maxNumOfEmployeesTemp*10))
+          //p5i.random(p5i.destination[0][0] *1.75,p5i.destination[1][0]-(employerDiameter*5)),
+          //p5i.random(p5i.destination[0][1]+(employerDiameter*5), p5i.destination[1][1]-(employerDiameter*5))
         );
-        for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(posTest,p5i.employers[j].pos) < employerDiameter*10)validLocation = false;
+        for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(posTest,p5i.employers[j].pos) < maxNumOfEmployeesTemp*10)validLocation = false;
       }
 
-      p5i.employers.push(new Employer(p5i, posTest.x, posTest.y, 0, 0, intermediaryDiameter,networkTemp));
+      p5i.employers.push(new Employer(p5i, posTest.x, posTest.y, 0, 0, intermediaryDiameter,networkTemp,maxNumOfEmployeesTemp));
     }
   }
 
@@ -181,8 +199,14 @@ let migrationPathwaysABM = p5i => {
       var validLocation = false;
       while(validLocation == false){
         validLocation = true;
+        var posXTemp; 
+        if(i < (0.5 * p5i.numOfIntermediaries)){
+          posXTemp = p5i.random(p5i.destination[0][0]*0.8 - intermediaryDiameter, p5i.destination[0][0]*1,2);
+        }else{
+          posXTemp = p5i.random(p5i.destination[0][0] - intermediaryDiameter, p5i.destination[1][0]*0.9);
+        }
         var posTest = p5i.createVector(
-          p5i.random(p5i.destination[0][0]*0.7 - intermediaryDiameter, p5i.destination[1][0]*0.9), 
+          posXTemp,
           p5i.random(p5i.destination[0][1]+intermediaryDiameter, p5i.destination[1][1]-intermediaryDiameter)
         );
         for(var j = 0; j < p5i.employers.length;j++)if(p5.Vector.dist(posTest,p5i.employers[j].pos) < employerDiameter*5)validLocation = false;
@@ -198,8 +222,8 @@ let migrationPathwaysABM = p5i => {
     for(var i = 0; i < p5i.numOfMigrants; i++){
     p5i.migrants.push(
       new Migrant(p5i, 
-        p5i.random(p5i.origin[0][0]+migrantDiameter, p5i.origin[1][0]), 
-        p5i.random(p5i.origin[0][1]+migrantDiameter, p5i.origin[1][1]-migrantDiameter), 
+        p5i.random(p5i.origin[0][0]+migrantDiameter,p5i.origin[1][0]), 
+        p5i.random(p5i.origin[0][1]+migrantDiameter,p5i.origin[1][1]-migrantDiameter), 
         0, 0, migrantDiameter)
       );
     }

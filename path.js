@@ -1,4 +1,5 @@
 /*
+ *
  * Path 
  *
  */
@@ -9,22 +10,21 @@ function Path (p5i, migrant, pos, dir, network){
   this.dir = dir;
   this.network = network
 
-  var initial = new Step(p5i,null,this.pos,this.dir,9); 
-  var current = initial;
+  var initial = new Step(p5i,null,this.pos,this.dir,9);//10 9 
   this.steps = [];
+  this.steps.push(initial);
   this.shortestStep = [];
-  this.steps.push(current);
 
 
   var parent = this;
   this.networks = {
     "a":{
       move:function(){parent.grow()},
-      stroke:p5i.color(255,255,255,120),
+      stroke:p5i.color(255,100),
     },
     "b":{
       move:function(){parent.grow()},
-      stroke:p5i.color(0,0,0,120),
+      stroke:p5i.color(0,50),
     }
   };
 
@@ -41,7 +41,7 @@ function Path (p5i, migrant, pos, dir, network){
     p5i.stroke(this.networks[this.network].stroke);
     p5i.strokeWeight(migrant.states[migrant.state].strokeWeight);
     migrant.state == "brokered" ? p5i.beginShape(p5i.POINTS) : p5i.beginShape();
-    for(var i = 0; i < this.steps.length; i++){p5i.vertex(this.steps[i].pos.x,this.steps[i].pos.y);}
+    for(var i = 3; i < this.steps.length; i++){p5i.vertex(this.steps[i].pos.x,this.steps[i].pos.y);}
     p5i.endShape();
     p5i.pop();
   };
@@ -65,9 +65,13 @@ function Path (p5i, migrant, pos, dir, network){
 
           // if this step is within the employer's employment diameter
           // the employer will employ the migrant
-          if(employer.dMin > d){
-            migrant.employer = employer; migrant.employers[i]=true;
-            migrant.state = "transit"; closestStep = null; break;
+          if(employer.dMin > d && employer.numOfEmployees < employer.maxNumOfEmployees){
+            migrant.employer = employer;
+            migrant.employers[i]=true;
+            migrant.employer.numOfEmployees++;
+            migrant.state = "transit"; 
+            closestStep = null; 
+            break;
           }else if(d < record){
             // (A step in a migrant's path can be influenced by many employers each timestep)
             // (An employer can only influence 1 step in a migrant's path each timestep)
@@ -138,12 +142,13 @@ function Path (p5i, migrant, pos, dir, network){
     // if the migrant's path has reached an employer
     // remove all erroneous steps
     if(migrant.state == "transit"){
-      var eRecord = 10000;
+      var eRecord = 100000;
       var employerStep;
       var shortestPath = [];
       
       // find step that reached the employer
-      for(var i = this.steps.length -1; i >= 0; i--){
+      // >=
+      for(var i = this.steps.length -1; i > 0; i--){
         var ed = p5.Vector.dist(migrant.employer.pos,this.steps[i].pos);
         if(ed < eRecord){
           eRecord = ed;
