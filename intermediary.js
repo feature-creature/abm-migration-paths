@@ -9,7 +9,6 @@ function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
   this.normalizedBool = function(x){return Math.random() <= x;} 
   this.exampleBoo = this.normalizedBool(0.5); 
   this.network = p5i.random() <= 0.5 ? "a" : "b";
-  this.hiring = false;
   this.d = diameter;
   this.dMax = 250;
   this.dMin = 9;
@@ -18,12 +17,12 @@ function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
   this.networks = {
     "a" : {
       move:function(){parent.recruitingWalk()},
-      color:p5i.color(255,255,255),
+      color:p5i.color(255),
       stroke:p5i.color(75,75,75)
     },
     "b" : {
       move:function(){parent.recruitingWalk()},
-      color:p5i.color(0,0,0),
+      color:p5i.color(125,21,10),
       stroke:p5i.color(75,75,75)
     }
   };
@@ -45,6 +44,13 @@ function Intermediary (p5i,xPos,yPos,xDir,yDir,diameter){
     p5i.strokeWeight(2);
     p5i.stroke(this.networks[this.network].stroke);
     p5i.ellipse(0,0,this.d*2,this.d*2);
+
+    /*
+     * LOGIC
+    p5i.stroke(55,50);
+    p5i.ellipse(0,0,this.dMax,this.dMax);
+    p5i.ellipse(0,0,this.dMin,this.dMin);
+    */
     p5i.pop();
   }
 
